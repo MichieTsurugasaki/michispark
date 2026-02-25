@@ -931,7 +931,7 @@ document.getElementById('exportPdfBtn').addEventListener('click', () => {
     const discountLabel = isDiscountApplied ? ' <span style="color:#c0392b;font-weight:700;">(20%OFF適用)</span>' : '';
 
     const pdfContent = `
-    <div id="pdf-export-content" style="font-family:'Noto Sans JP',sans-serif;color:#3d3331;padding:40px 35px;max-width:700px;margin:0 auto;background:#ffffff;">
+    <div id="pdf-export-content" style="font-family:'Noto Sans JP',sans-serif;color:#3d3331;padding:40px 35px;width:700px;box-sizing:border-box;background:#ffffff;">
         <!-- ヘッダー -->
         <div style="text-align:center;margin-bottom:30px;padding-bottom:20px;border-bottom:3px solid #c4956a;">
             <div style="font-family:'Noto Serif JP',serif;font-size:32px;font-weight:700;letter-spacing:0.05em;"><span style="color:#6b5344;">Michi</span><span style="color:#c4956a;">Spark</span></div>
@@ -1033,7 +1033,7 @@ document.getElementById('exportPdfBtn').addEventListener('click', () => {
 
     // 一時要素を作成してPDF化
     const wrapper = document.createElement('div');
-    wrapper.style.cssText = 'position:fixed;left:-9999px;top:0;width:700px;pointer-events:none;background:#ffffff;';
+    wrapper.style.cssText = 'position:absolute;left:0;top:0;width:700px;background:#ffffff;z-index:-1;overflow:hidden;';
     wrapper.innerHTML = pdfContent;
     document.body.appendChild(wrapper);
 
@@ -1041,7 +1041,29 @@ document.getElementById('exportPdfBtn').addEventListener('click', () => {
         margin: [10, 10, 10, 10],
         filename: `MichiSpark_見積書_${mc.name.replace(/[\s/]/g, '_')}_${dateStr.replace(/\//g, '')}.pdf`,
         image: { type: 'png', quality: 1 },
-        html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff', width: 700, windowWidth: 700 },
+        html2canvas: {
+            scale: 2,
+            useCORS: true,
+            backgroundColor: '#ffffff',
+            width: 700,
+            windowWidth: 700,
+            scrollX: 0,
+            scrollY: 0,
+            onclone: function(clonedDoc) {
+                const el = clonedDoc.getElementById('pdf-export-content');
+                if (el) {
+                    el.style.position = 'relative';
+                    el.style.left = '0';
+                    el.style.top = '0';
+                    if (el.parentElement) {
+                        el.parentElement.style.position = 'relative';
+                        el.parentElement.style.left = '0';
+                        el.parentElement.style.top = '0';
+                        el.parentElement.style.overflow = 'visible';
+                    }
+                }
+            }
+        },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
