@@ -1229,7 +1229,7 @@ button {
     .model-btn .btn-icon { font-size: 0.9rem; }
 
     /* テキスト入力 */
-    textarea { height: 80px; font-size: 1rem; padding: 0.7rem 0.8rem; border-radius: 8px; color: #2a2625; }
+    textarea { height: 120px; font-size: 1rem; padding: 0.7rem 0.8rem; border-radius: 8px; color: #2a2625; }
 
     /* ボタン - 大きくタップしやすく */
     .controls { grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 0.7rem; }
@@ -1241,11 +1241,12 @@ button {
     .divider { margin: 0.7rem 0; font-size: 0.82rem; }
 
     /* PDF アップロード */
-    .upload-area { padding: 1.2rem 1rem; border-radius: 10px; }
-    .upload-icon { font-size: 1.8rem; }
-    .upload-text { font-size: 0.95rem; line-height: 1.6; color: #3d3331; }
-    .upload-hint { font-size: 0.8rem; }
-    .upload-link { font-size: 0.95rem; }
+    .upload-area { padding: 0.7rem 0.8rem; border-radius: 8px; min-height: auto; }
+    .upload-icon { font-size: 1.2rem; margin-bottom: 0.2rem; }
+    .upload-text { font-size: 0.85rem; line-height: 1.4; color: #3d3331; }
+    .upload-text br { display: none; }
+    .upload-hint { font-size: 0.72rem; margin-top: 0.2rem; }
+    .upload-link { font-size: 0.88rem; }
 
     /* PDF読み込み状態 */
     .pdf-status { padding: 0.6rem 0.8rem; }
