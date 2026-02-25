@@ -1,6 +1,7 @@
 // ===== MichiSpark Booking Worker =====
-// Handles: POST /api/booking, POST /api/cancel
+// Handles: POST /api/booking, POST /api/cancel, Admin APIs
 // Static assets served automatically via [assets] config
+// KV: BOOKING_KV namespace for data persistence
 
 export default {
     async fetch(request, env, ctx) {
@@ -11,18 +12,55 @@ export default {
             return new Response(null, {
                 headers: {
                     'Access-Control-Allow-Origin': '*',
-                    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-                    'Access-Control-Allow-Headers': 'Content-Type'
+                    'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
+                    'Access-Control-Allow-Headers': 'Content-Type, Authorization'
                 }
             });
         }
 
-        // API routes
+        // Public API routes
         if (request.method === 'POST' && url.pathname === '/api/booking') {
             return handleBooking(request, env);
         }
         if (request.method === 'POST' && url.pathname === '/api/cancel') {
             return handleCancel(request, env);
+        }
+        if (request.method === 'GET' && url.pathname === '/api/schedule') {
+            return handlePublicSchedule(env);
+        }
+
+        // Admin API routes
+        if (url.pathname.startsWith('/api/admin/')) {
+            // Login doesn't need auth
+            if (request.method === 'POST' && url.pathname === '/api/admin/login') {
+                return handleAdminLogin(request, env);
+            }
+            // All other admin routes need auth
+            if (!verifyAdminToken(request, env)) {
+                return jsonResponse({ error: 'Unauthorized' }, 401);
+            }
+            if (request.method === 'GET' && url.pathname === '/api/admin/bookings') {
+                return handleAdminGetBookings(env);
+            }
+            if (request.method === 'POST' && url.pathname === '/api/admin/cancel') {
+                return handleAdminCancel(request, env);
+            }
+            if (request.method === 'GET' && url.pathname === '/api/admin/schedule') {
+                return handleAdminGetSchedule(env);
+            }
+            if (request.method === 'POST' && url.pathname === '/api/admin/schedule/block') {
+                return handleAdminAddBlock(request, env);
+            }
+            if (request.method === 'DELETE' && url.pathname === '/api/admin/schedule/block') {
+                return handleAdminRemoveBlock(url, env);
+            }
+            if (request.method === 'POST' && url.pathname === '/api/admin/schedule/extra') {
+                return handleAdminAddExtra(request, env);
+            }
+            if (request.method === 'DELETE' && url.pathname === '/api/admin/schedule/extra') {
+                return handleAdminRemoveExtra(url, env);
+            }
+            return jsonResponse({ error: 'Not found' }, 404);
         }
 
         // Non-API requests that reach here got no asset match → 404
@@ -95,6 +133,13 @@ async function handleBooking(request, env) {
         // リマインドメール予約（24時間前 + 1時間前）
         await scheduleReminders(env, { date, time, name, email, zoomLink, cancelUrl, rescheduleUrl });
 
+        // KVに予約を保存
+        const bookingId = `booking_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+        await saveBooking(env, {
+            id: bookingId, date, time, name, email, company, message,
+            zoomLink, meetingId, cancelled: false, createdAt: new Date().toISOString()
+        });
+
         return jsonResponse({ success: true, zoomLink });
     } catch (err) {
         console.error('Booking error:', err);
@@ -136,6 +181,9 @@ async function handleCancel(request, env) {
             subject: `【キャンセル】${booking.n}様 - ${booking.d} ${booking.t}`,
             html: buildAdminCancelEmail(booking)
         });
+
+        // KVで予約をキャンセル済みに
+        await markBookingCancelled(env, booking.d, booking.t, booking.e);
 
         return jsonResponse({ success: true });
     } catch (err) {
@@ -283,6 +331,164 @@ async function scheduleReminders(env, { date, time, name, email, zoomLink, cance
             console.error('1h reminder failed:', e);
         }
     }
+}
+
+// ========================================
+//  Admin Authentication
+// ========================================
+function handleAdminLogin(request, env) {
+    return request.json().then(({ password }) => {
+        if (!env.ADMIN_PASSWORD || password !== env.ADMIN_PASSWORD) {
+            return jsonResponse({ error: 'Invalid password' }, 401);
+        }
+        // Simple token: base64(password + timestamp)
+        const token = generateToken({ p: password, ts: Date.now() });
+        return jsonResponse({ token });
+    });
+}
+
+function verifyAdminToken(request, env) {
+    const auth = request.headers.get('Authorization');
+    if (!auth || !auth.startsWith('Bearer ')) return false;
+    try {
+        const data = decodeToken(auth.slice(7));
+        return data && data.p === env.ADMIN_PASSWORD;
+    } catch {
+        return false;
+    }
+}
+
+// ========================================
+//  KV Storage Helpers
+// ========================================
+async function saveBooking(env, booking) {
+    if (!env.BOOKING_KV) return;
+    const bookings = await getBookings(env);
+    bookings.push(booking);
+    await env.BOOKING_KV.put('bookings', JSON.stringify(bookings));
+}
+
+async function getBookings(env) {
+    if (!env.BOOKING_KV) return [];
+    const data = await env.BOOKING_KV.get('bookings');
+    return data ? JSON.parse(data) : [];
+}
+
+async function markBookingCancelled(env, date, time, email) {
+    if (!env.BOOKING_KV) return;
+    const bookings = await getBookings(env);
+    for (const b of bookings) {
+        if (b.date === date && b.time === time && b.email === email && !b.cancelled) {
+            b.cancelled = true;
+            b.cancelledAt = new Date().toISOString();
+        }
+    }
+    await env.BOOKING_KV.put('bookings', JSON.stringify(bookings));
+}
+
+async function markBookingCancelledById(env, bookingId) {
+    if (!env.BOOKING_KV) return null;
+    const bookings = await getBookings(env);
+    const booking = bookings.find(b => b.id === bookingId);
+    if (booking) {
+        booking.cancelled = true;
+        booking.cancelledAt = new Date().toISOString();
+        await env.BOOKING_KV.put('bookings', JSON.stringify(bookings));
+    }
+    return booking;
+}
+
+async function getBlockedDates(env) {
+    if (!env.BOOKING_KV) return [];
+    const data = await env.BOOKING_KV.get('blocked_dates');
+    return data ? JSON.parse(data) : [];
+}
+
+async function getExtraDates(env) {
+    if (!env.BOOKING_KV) return [];
+    const data = await env.BOOKING_KV.get('extra_dates');
+    return data ? JSON.parse(data) : [];
+}
+
+// ========================================
+//  Admin API Handlers
+// ========================================
+async function handleAdminGetBookings(env) {
+    const bookings = await getBookings(env);
+    return jsonResponse({ bookings });
+}
+
+async function handleAdminCancel(request, env) {
+    const { bookingId } = await request.json();
+    const booking = await markBookingCancelledById(env, bookingId);
+    if (!booking) return jsonResponse({ error: '予約が見つかりません' }, 404);
+
+    // Zoom削除
+    if (booking.meetingId) {
+        try { await cancelZoomMeeting(env, booking.meetingId); } catch(e) { console.error(e); }
+    }
+    // キャンセルメール送信
+    await sendEmail(env, {
+        to: booking.email,
+        subject: '【MichiSpark】オンライン相談会のキャンセルについて',
+        html: buildCancelConfirmEmail({ d: booking.date, t: booking.time, n: booking.name, e: booking.email })
+    });
+
+    return jsonResponse({ success: true });
+}
+
+async function handleAdminGetSchedule(env) {
+    const [blocked, extra] = await Promise.all([getBlockedDates(env), getExtraDates(env)]);
+    return jsonResponse({ blocked, extra });
+}
+
+async function handleAdminAddBlock(request, env) {
+    const { date, reason } = await request.json();
+    if (!date) return jsonResponse({ error: '日付が必要です' }, 400);
+    const blocked = await getBlockedDates(env);
+    if (!blocked.find(d => d.date === date)) {
+        blocked.push({ date, reason: reason || '' });
+        await env.BOOKING_KV.put('blocked_dates', JSON.stringify(blocked));
+    }
+    return jsonResponse({ success: true });
+}
+
+async function handleAdminRemoveBlock(url, env) {
+    const date = url.searchParams.get('date');
+    if (!date) return jsonResponse({ error: '日付が必要です' }, 400);
+    let blocked = await getBlockedDates(env);
+    blocked = blocked.filter(d => d.date !== date);
+    await env.BOOKING_KV.put('blocked_dates', JSON.stringify(blocked));
+    return jsonResponse({ success: true });
+}
+
+async function handleAdminAddExtra(request, env) {
+    const { date, time } = await request.json();
+    if (!date || !time) return jsonResponse({ error: '日付と時間が必要です' }, 400);
+    const extra = await getExtraDates(env);
+    if (!extra.find(d => d.date === date)) {
+        extra.push({ date, time });
+        await env.BOOKING_KV.put('extra_dates', JSON.stringify(extra));
+    }
+    return jsonResponse({ success: true });
+}
+
+async function handleAdminRemoveExtra(url, env) {
+    const date = url.searchParams.get('date');
+    if (!date) return jsonResponse({ error: '日付が必要です' }, 400);
+    let extra = await getExtraDates(env);
+    extra = extra.filter(d => d.date !== date);
+    await env.BOOKING_KV.put('extra_dates', JSON.stringify(extra));
+    return jsonResponse({ success: true });
+}
+
+// 公開スケジュールAPI（ブロック日・臨時枠をフロントに返す）
+async function handlePublicSchedule(env) {
+    const [blocked, extra] = await Promise.all([getBlockedDates(env), getExtraDates(env)]);
+    return jsonResponse({
+        blockedDates: blocked.map(d => d.date),
+        extraDates: extra.map(d => ({ date: d.date, time: d.time }))
+    });
 }
 
 // ========================================

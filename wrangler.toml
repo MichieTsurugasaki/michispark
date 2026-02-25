@@ -10,3 +10,8 @@ not_found_handling = "none"
 
 [vars]
 ADMIN_EMAIL = "tsurugasaki@conete.net"
+
+# KV Namespace
+[[kv_namespaces]]
+binding = "BOOKING_KV"
+id = "12b3db545bcd4b96b4e1803433a6fa19"

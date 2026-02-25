@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MichiSpark | 管理者ダッシュボード</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <!-- ログイン画面 -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-card">
+            <div class="brand">
+                <div class="brand-mark"><span class="brand-icon">&#9670;</span></div>
+                <div class="brand-logo">Michi<span class="spark">Spark</span></div>
+                <p class="brand-tagline">Admin Dashboard</p>
+            </div>
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="adminPassword">管理者パスワード</label>
+                    <input type="password" id="adminPassword" required placeholder="パスワードを入力">
+                </div>
+                <button type="submit" class="login-btn">ログイン</button>
+                <p id="loginError" class="login-error hidden">パスワードが正しくありません</p>
+            </form>
+        </div>
+    </div>
+
+    <!-- ダッシュボード -->
+    <div id="dashboard" class="dashboard hidden">
+        <header class="admin-header">
+            <div class="header-left">
+                <span class="header-logo">Michi<span class="header-spark">Spark</span></span>
+                <span class="header-badge">Admin</span>
+            </div>
+            <div class="header-right">
+                <a href="index.html" class="header-link">見積もりページ</a>
+                <a href="booking" class="header-link">予約ページ</a>
+                <button id="logoutBtn" class="logout-btn">ログアウト</button>
+            </div>
+        </header>
+
+        <main class="admin-main">
+            <!-- 統計カード -->
+            <div class="stats-row">
+                <div class="stat-card">
+                    <span class="stat-num" id="statTotal">0</span>
+                    <span class="stat-label">全予約</span>
+                </div>
+                <div class="stat-card stat-upcoming">
+                    <span class="stat-num" id="statUpcoming">0</span>
+                    <span class="stat-label">今後の予約</span>
+                </div>
+                <div class="stat-card stat-cancelled">
+                    <span class="stat-num" id="statCancelled">0</span>
+                    <span class="stat-label">キャンセル</span>
+                </div>
+            </div>
+
+            <!-- タブ -->
+            <div class="tab-bar">
+                <button class="tab active" data-tab="bookings">予約一覧</button>
+                <button class="tab" data-tab="schedule">スケジュール管理</button>
+            </div>
+
+            <!-- 予約一覧タブ -->
+            <div id="tabBookings" class="tab-content active">
+                <div class="section-header">
+                    <h2>予約一覧</h2>
+                    <div class="filter-group">
+                        <select id="filterStatus">
+                            <option value="all">すべて</option>
+                            <option value="active" selected>有効</option>
+                            <option value="cancelled">キャンセル済み</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="bookingList" class="booking-list">
+                    <p class="empty-msg">予約はありません</p>
+                </div>
+            </div>
+
+            <!-- スケジュール管理タブ -->
+            <div id="tabSchedule" class="tab-content">
+                <div class="section-header">
+                    <h2>スケジュール管理</h2>
+                </div>
+
+                <!-- ブロック日追加 -->
+                <div class="schedule-card">
+                    <h3>予約不可日を追加</h3>
+                    <p class="schedule-desc">特定の日付を予約不可にします（祝日・出張など）</p>
+                    <div class="block-form">
+                        <input type="date" id="blockDate" class="block-date-input">
+                        <input type="text" id="blockReason" placeholder="理由（任意）" class="block-reason-input">
+                        <button id="addBlockBtn" class="add-block-btn">追加</button>
+                    </div>
+                </div>
+
+                <!-- ブロック日一覧 -->
+                <div class="schedule-card">
+                    <h3>予約不可日一覧</h3>
+                    <div id="blockedDatesList" class="blocked-dates-list">
+                        <p class="empty-msg">ブロックされた日はありません</p>
+                    </div>
+                </div>
+
+                <!-- 臨時予約枠追加 -->
+                <div class="schedule-card">
+                    <h3>臨時予約枠を追加</h3>
+                    <p class="schedule-desc">通常（火水木）以外の日に予約枠を追加します</p>
+                    <div class="block-form">
+                        <input type="date" id="extraDate" class="block-date-input">
+                        <input type="text" id="extraTime" placeholder="時間帯（例: 10:00 - 11:00）" class="block-reason-input" value="8:00 - 9:00">
+                        <button id="addExtraBtn" class="add-block-btn extra-btn">追加</button>
+                    </div>
+                </div>
+
+                <!-- 臨時枠一覧 -->
+                <div class="schedule-card">
+                    <h3>臨時予約枠一覧</h3>
+                    <div id="extraDatesList" class="blocked-dates-list">
+                        <p class="empty-msg">臨時枠はありません</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- 予約詳細モーダル -->
+        <div id="bookingModal" class="modal hidden">
+            <div class="modal-backdrop"></div>
+            <div class="modal-content">
+                <button class="modal-close" id="closeModal">&times;</button>
+                <h3 class="modal-title">予約詳細</h3>
+                <div id="modalBody" class="modal-body"></div>
+                <div class="modal-actions" id="modalActions"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>

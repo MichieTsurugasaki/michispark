@@ -9,6 +9,8 @@ let currentYear, currentMonth;
 let selectedDate = null;
 let selectedTime = null;
 let rescheduleToken = null; // 日程変更時に旧予約トークンを保持
+let blockedDates = []; // 管理者がブロックした日
+let extraDates = [];   // 管理者が追加した臨時枠
 
 // ===== DOM =====
 const calendarTitle = document.getElementById('calendarTitle');
@@ -33,11 +35,43 @@ const submitBtn = document.getElementById('submitBooking');
 const loadingOverlay = document.getElementById('loadingOverlay');
 
 // ===== カレンダー初期化 =====
-function initCalendar() {
+async function initCalendar() {
     const today = new Date();
     currentYear = today.getFullYear();
     currentMonth = today.getMonth();
+
+    // スケジュールデータ取得
+    try {
+        const res = await fetch('/api/schedule');
+        if (res.ok) {
+            const data = await res.json();
+            blockedDates = data.blockedDates || [];
+            extraDates = data.extraDates || [];
+        }
+    } catch (e) {
+        console.warn('Schedule fetch failed:', e);
+    }
+
     renderCalendar();
+}
+
+function isDateAvailable(date) {
+    const dateStr = date.toISOString().split('T')[0];
+    const dow = date.getDay();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (date < today) return false;
+    if (blockedDates.includes(dateStr)) return false;
+    if (extraDates.find(e => e.date === dateStr)) return true;
+    return AVAILABLE_DAYS.includes(dow);
+}
+
+function getTimeSlotsForDate(date) {
+    const dateStr = date.toISOString().split('T')[0];
+    const extra = extraDates.find(e => e.date === dateStr);
+    if (extra) return [extra.time];
+    return TIME_SLOTS;
 }
 
 function renderCalendar() {
@@ -67,7 +101,7 @@ function renderCalendar() {
     for (let d = 1; d <= daysInMonth; d++) {
         const date = new Date(year, month, d);
         const dow = date.getDay();
-        const isAvailable = AVAILABLE_DAYS.includes(dow) && date >= today;
+        const isAvailable = isDateAvailable(date);
         const isToday = date.getTime() === today.getTime();
 
         const el = document.createElement('button');
@@ -111,7 +145,8 @@ function selectDate(date, el) {
 
 function renderTimeSlots() {
     timeSlotsEl.innerHTML = '';
-    TIME_SLOTS.forEach(slot => {
+    const slots = selectedDate ? getTimeSlotsForDate(selectedDate) : TIME_SLOTS;
+    slots.forEach(slot => {
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.className = 'time-slot';
