@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MichiSpark | オンライン相談会予約</title>
+    <link rel="stylesheet" href="booking.css">
+</head>
+<body>
+    <div class="container">
+        <header class="brand">
+            <div class="brand-mark">
+                <span class="brand-icon">&#9670;</span>
+            </div>
+            <div class="brand-logo"><a href="index.html" class="brand-link">Michi<span class="spark">Spark</span></a></div>
+            <div class="brand-line"></div>
+            <p class="brand-tagline">Online Consultation</p>
+        </header>
+
+        <h1>オンライン相談会予約</h1>
+        <p class="subtitle">アプリの詳細機能や要件について無料でご相談いただけます</p>
+
+        <!-- ステップインジケーター -->
+        <div class="steps">
+            <div class="step active" data-step="1">
+                <span class="step-num">1</span>
+                <span class="step-label">日時選択</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step" data-step="2">
+                <span class="step-num">2</span>
+                <span class="step-label">情報入力</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step" data-step="3">
+                <span class="step-num">3</span>
+                <span class="step-label">確認</span>
+            </div>
+        </div>
+
+        <!-- Step 1: 日時選択 -->
+        <div id="step1" class="step-content active">
+            <div class="calendar-section">
+                <div class="calendar-header">
+                    <button id="prevMonth" class="cal-nav">&lsaquo;</button>
+                    <span id="calendarTitle" class="cal-title"></span>
+                    <button id="nextMonth" class="cal-nav">&rsaquo;</button>
+                </div>
+                <div class="calendar-weekdays">
+                    <span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span>土</span><span>日</span>
+                </div>
+                <div id="calendarGrid" class="calendar-grid"></div>
+                <p class="calendar-note">火・水・木のみ予約可能です</p>
+            </div>
+
+            <div id="timeSection" class="time-section hidden">
+                <h3 class="time-heading"><span id="selectedDateLabel"></span>の予約枠</h3>
+                <div id="timeSlots" class="time-slots"></div>
+            </div>
+
+            <button id="toStep2" class="next-btn hidden" disabled>次へ —  情報入力</button>
+        </div>
+
+        <!-- Step 2: 情報入力 -->
+        <div id="step2" class="step-content">
+            <div class="selected-summary">
+                <span class="summary-label">選択した日時</span>
+                <span id="summaryDateTime" class="summary-value"></span>
+            </div>
+
+            <form id="bookingForm" class="booking-form">
+                <div class="form-group">
+                    <label for="userName">お名前 <span class="required">*</span></label>
+                    <input type="text" id="userName" required placeholder="山田 太郎">
+                </div>
+                <div class="form-group">
+                    <label for="userEmail">メールアドレス <span class="required">*</span></label>
+                    <input type="email" id="userEmail" required placeholder="example@email.com">
+                </div>
+                <div class="form-group">
+                    <label for="userCompany">会社名 <span class="optional">任意</span></label>
+                    <input type="text" id="userCompany" placeholder="株式会社〇〇">
+                </div>
+                <div class="form-group">
+                    <label for="userMessage">ご相談内容 <span class="optional">任意</span></label>
+                    <textarea id="userMessage" rows="4" placeholder="相談したい内容やアプリのイメージがあればご記入ください"></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" id="backToStep1" class="back-btn">戻る</button>
+                    <button type="submit" class="next-btn">確認画面へ</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Step 3: 確認 -->
+        <div id="step3" class="step-content">
+            <div class="confirm-card">
+                <h3 class="confirm-heading">予約内容の確認</h3>
+                <dl class="confirm-list">
+                    <dt>日時</dt>
+                    <dd id="confirmDateTime"></dd>
+                    <dt>お名前</dt>
+                    <dd id="confirmName"></dd>
+                    <dt>メールアドレス</dt>
+                    <dd id="confirmEmail"></dd>
+                    <dt>会社名</dt>
+                    <dd id="confirmCompany"></dd>
+                    <dt>ご相談内容</dt>
+                    <dd id="confirmMessage"></dd>
+                </dl>
+                <p class="confirm-note">予約確定後、Zoom会議のURLをメールでお送りします</p>
+            </div>
+
+            <div class="form-actions">
+                <button id="backToStep2" class="back-btn">戻る</button>
+                <button id="submitBooking" class="submit-btn">予約を確定する</button>
+            </div>
+        </div>
+
+        <!-- 完了画面 -->
+        <div id="stepDone" class="step-content">
+            <div class="done-card">
+                <div class="done-icon">✓</div>
+                <h2 class="done-heading">ご予約ありがとうございます</h2>
+                <p class="done-text">確認メールをお送りしました。<br>Zoom会議のURLが記載されていますのでご確認ください。</p>
+                <div class="done-summary">
+                    <span id="doneDateTime"></span>
+                </div>
+                <a href="index.html" class="back-home">見積もりページに戻る</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ローディング -->
+    <div id="loadingOverlay" class="loading-overlay hidden">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">予約を処理中…</p>
+    </div>
+
+    <footer class="footer">
+        <span class="footer-brand">Michi<span class="footer-spark">Spark</span></span>
+    </footer>
+
+    <script src="booking.js"></script>
+</body>
+</html>
