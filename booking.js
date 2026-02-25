@@ -10,8 +10,7 @@ let selectedDate = null;
 let selectedTime = null;
 let rescheduleToken = null; // 日程変更時に旧予約トークンを保持
 let blockedDates = []; // 管理者がブロックした日
-let extraDates = [];   // 管理者が追加した臨時枠
-
+let extraDates = [];   // 管理者が追加した臨時枠let recurringSlots = []; // 繰り返し予約枚
 // ===== DOM =====
 const calendarTitle = document.getElementById('calendarTitle');
 const calendarGrid = document.getElementById('calendarGrid');
@@ -47,6 +46,7 @@ async function initCalendar() {
             const data = await res.json();
             blockedDates = data.blockedDates || [];
             extraDates = data.extraDates || [];
+            recurringSlots = data.recurringSlots || [];
         }
     } catch (e) {
         console.warn('Schedule fetch failed:', e);
@@ -64,14 +64,29 @@ function isDateAvailable(date) {
     if (date < today) return false;
     if (blockedDates.includes(dateStr)) return false;
     if (extraDates.find(e => e.date === dateStr)) return true;
+    // 繰り返し枚に該当曜日があれば予約可能
+    if (recurringSlots.find(r => r.day === dow)) return true;
     return AVAILABLE_DAYS.includes(dow);
 }
 
 function getTimeSlotsForDate(date) {
     const dateStr = date.toISOString().split('T')[0];
+    const dow = date.getDay();
     const extra = extraDates.find(e => e.date === dateStr);
-    if (extra) return [extra.time];
-    return TIME_SLOTS;
+    // 臨時枚があればそれを使う
+    const slots = extra ? [extra.time] : [];
+    // 通常の曜日（火水木）ならデフォルト時間を追加
+    if (AVAILABLE_DAYS.includes(dow)) {
+        for (const t of TIME_SLOTS) {
+            if (!slots.includes(t)) slots.push(t);
+        }
+    }
+    // 繰り返し枚の時間を追加
+    const recurringForDay = recurringSlots.filter(r => r.day === dow);
+    for (const r of recurringForDay) {
+        if (!slots.includes(r.time)) slots.push(r.time);
+    }
+    return slots.length > 0 ? slots : TIME_SLOTS;
 }
 
 function renderCalendar() {

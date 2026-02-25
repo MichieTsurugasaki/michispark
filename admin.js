@@ -32,6 +32,10 @@ const extraDate = document.getElementById('extraDate');
 const extraTime = document.getElementById('extraTime');
 const addExtraBtn = document.getElementById('addExtraBtn');
 const extraDatesList = document.getElementById('extraDatesList');
+const recurringDay = document.getElementById('recurringDay');
+const recurringTime = document.getElementById('recurringTime');
+const addRecurringBtn = document.getElementById('addRecurringBtn');
+const recurringSlotsList = document.getElementById('recurringSlotsList');
 
 // Modal
 const bookingModal = document.getElementById('bookingModal');
@@ -43,6 +47,7 @@ const modalActions = document.getElementById('modalActions');
 let bookings = [];
 let blockedDates = [];
 let extraDates = [];
+let recurringSlots = [];
 
 // ===== Login =====
 loginForm.addEventListener('submit', async (e) => {
@@ -247,8 +252,10 @@ async function loadSchedule() {
         const data = await apiGet('/api/admin/schedule');
         blockedDates = data.blocked || [];
         extraDates = data.extra || [];
+        recurringSlots = data.recurring || [];
         renderBlockedDates();
         renderExtraDates();
+        renderRecurringSlots();
     } catch (e) {
         console.error('Load schedule error:', e);
     }
@@ -328,6 +335,47 @@ window.removeExtra = async function(date) {
     if (!confirm(`${date} の臨時枠を削除しますか？`)) return;
     try {
         await apiDelete(`/api/admin/schedule/extra?date=${date}`);
+        await loadSchedule();
+    } catch (e) {
+        alert('削除に失敗しました');
+    }
+};
+// ===== Recurring Slots =====
+const DAY_NAMES = ['日曜日', '月曜日', '火曜日', '水曜日', '木曜日', '金曜日', '土曜日'];
+
+function renderRecurringSlots() {
+    if (recurringSlots.length === 0) {
+        recurringSlotsList.innerHTML = '<p class="empty-msg">繰り返し枚はありません</p>';
+        return;
+    }
+    recurringSlots.sort((a, b) => a.day - b.day);
+    recurringSlotsList.innerHTML = recurringSlots.map(s => `
+        <div class="blocked-item">
+            <div class="blocked-item-info">
+                <span class="blocked-item-date">毎週${DAY_NAMES[s.day]}</span>
+                <span class="blocked-item-time">${s.time}</span>
+            </div>
+            <button class="blocked-remove" onclick="removeRecurring(${s.day}, '${s.time.replace(/'/g, "\\'")}')">&#10005;</button>
+        </div>
+    `).join('');
+}
+
+addRecurringBtn.addEventListener('click', async () => {
+    const day = parseInt(recurringDay.value);
+    const time = recurringTime.value;
+    if (isNaN(day) || !time) { alert('曜日と時間帯を入力してください'); return; }
+    try {
+        await apiPost('/api/admin/schedule/recurring', { day, time });
+        await loadSchedule();
+    } catch (e) {
+        alert('追加に失敗しました');
+    }
+});
+
+window.removeRecurring = async function(day, time) {
+    if (!confirm(`毎週${DAY_NAMES[day]} ${time} の繰り返し枚を削除しますか？`)) return;
+    try {
+        await apiDelete(`/api/admin/schedule/recurring?day=${day}&time=${encodeURIComponent(time)}`);
         await loadSchedule();
     } catch (e) {
         alert('削除に失敗しました');

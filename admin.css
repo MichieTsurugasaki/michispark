@@ -222,6 +222,8 @@ body {
 .add-block-btn:hover { background: var(--primary); }
 .extra-btn { background: var(--accent); }
 .extra-btn:hover { background: #b8875e; }
+.recurring-btn { background: #4a7c59; }
+.recurring-btn:hover { background: #5d9a6f; }
 .blocked-dates-list { display: flex; flex-direction: column; gap: 0.5rem; }
 .blocked-item {
     display: flex; align-items: center; justify-content: space-between;

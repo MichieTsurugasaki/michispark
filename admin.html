@@ -124,7 +124,32 @@
                         <p class="empty-msg">臨時枠はありません</p>
                     </div>
                 </div>
-            </div>
+                <!-- 繰り返し予約枚追加 -->
+                <div class="schedule-card">
+                    <h3>繰り返し予約枚を追加</h3>
+                    <p class="schedule-desc">毎週特定の曜日・時間帯を予約可能にします（通常の火水木以外も追加可）</p>
+                    <div class="block-form">
+                        <select id="recurringDay" class="block-date-input">
+                            <option value="1">毎週月曜日</option>
+                            <option value="2">毎週火曜日</option>
+                            <option value="3">毎週水曜日</option>
+                            <option value="4">毎週木曜日</option>
+                            <option value="5">毎週金曜日</option>
+                            <option value="6">毎週土曜日</option>
+                            <option value="0">毎週日曜日</option>
+                        </select>
+                        <input type="text" id="recurringTime" placeholder="時間帯（例: 10:00 - 11:00）" class="block-reason-input" value="8:00 - 9:00">
+                        <button id="addRecurringBtn" class="add-block-btn recurring-btn">追加</button>
+                    </div>
+                </div>
+
+                <!-- 繰り返し予約枚一覧 -->
+                <div class="schedule-card">
+                    <h3>繰り返し予約枚一覧</h3>
+                    <div id="recurringSlotsList" class="blocked-dates-list">
+                        <p class="empty-msg">繰り返し枚はありません</p>
+                    </div>
+                </div>            </div>
         </main>
 
         <!-- 予約詳細モーダル -->

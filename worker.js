@@ -60,6 +60,12 @@ export default {
             if (request.method === 'DELETE' && url.pathname === '/api/admin/schedule/extra') {
                 return handleAdminRemoveExtra(url, env);
             }
+            if (request.method === 'POST' && url.pathname === '/api/admin/schedule/recurring') {
+                return handleAdminAddRecurring(request, env);
+            }
+            if (request.method === 'DELETE' && url.pathname === '/api/admin/schedule/recurring') {
+                return handleAdminRemoveRecurring(url, env);
+            }
             return jsonResponse({ error: 'Not found' }, 404);
         }
 
@@ -410,6 +416,12 @@ async function getExtraDates(env) {
     return data ? JSON.parse(data) : [];
 }
 
+async function getRecurringSlots(env) {
+    if (!env.BOOKING_KV) return [];
+    const data = await env.BOOKING_KV.get('recurring_slots');
+    return data ? JSON.parse(data) : [];
+}
+
 // ========================================
 //  Admin API Handlers
 // ========================================
@@ -438,8 +450,8 @@ async function handleAdminCancel(request, env) {
 }
 
 async function handleAdminGetSchedule(env) {
-    const [blocked, extra] = await Promise.all([getBlockedDates(env), getExtraDates(env)]);
-    return jsonResponse({ blocked, extra });
+    const [blocked, extra, recurring] = await Promise.all([getBlockedDates(env), getExtraDates(env), getRecurringSlots(env)]);
+    return jsonResponse({ blocked, extra, recurring });
 }
 
 async function handleAdminAddBlock(request, env) {
@@ -482,12 +494,34 @@ async function handleAdminRemoveExtra(url, env) {
     return jsonResponse({ success: true });
 }
 
+async function handleAdminAddRecurring(request, env) {
+    const { day, time } = await request.json();
+    if (day === undefined || day === null || !time) return jsonResponse({ error: '曜日と時間が必要です' }, 400);
+    const recurring = await getRecurringSlots(env);
+    if (!recurring.find(r => r.day === day && r.time === time)) {
+        recurring.push({ day: parseInt(day), time });
+        await env.BOOKING_KV.put('recurring_slots', JSON.stringify(recurring));
+    }
+    return jsonResponse({ success: true });
+}
+
+async function handleAdminRemoveRecurring(url, env) {
+    const day = url.searchParams.get('day');
+    const time = url.searchParams.get('time');
+    if (day === null) return jsonResponse({ error: '曜日が必要です' }, 400);
+    let recurring = await getRecurringSlots(env);
+    recurring = recurring.filter(r => !(r.day === parseInt(day) && r.time === time));
+    await env.BOOKING_KV.put('recurring_slots', JSON.stringify(recurring));
+    return jsonResponse({ success: true });
+}
+
 // 公開スケジュールAPI（ブロック日・臨時枠をフロントに返す）
 async function handlePublicSchedule(env) {
-    const [blocked, extra] = await Promise.all([getBlockedDates(env), getExtraDates(env)]);
+    const [blocked, extra, recurring] = await Promise.all([getBlockedDates(env), getExtraDates(env), getRecurringSlots(env)]);
     return jsonResponse({
         blockedDates: blocked.map(d => d.date),
-        extraDates: extra.map(d => ({ date: d.date, time: d.time }))
+        extraDates: extra.map(d => ({ date: d.date, time: d.time })),
+        recurringSlots: recurring.map(r => ({ day: r.day, time: r.time }))
     });
 }
 
