@@ -959,7 +959,7 @@ document.getElementById('exportPdfBtn').addEventListener('click', () => {
         </div>`;
 
     const pdfContent = `
-    <div id="pdf-export-content" style="font-family:'Noto Sans JP',sans-serif;color:#3d3331;padding:30px 28px;width:630px;box-sizing:border-box;background:#ffffff;">
+    <div id="pdf-export-content" style="font-family:'Noto Sans JP',sans-serif;color:#3d3331;padding:24px 20px;box-sizing:border-box;background:#ffffff;">
         <!-- ヘッダー -->
         <div style="text-align:center;margin-bottom:22px;padding-bottom:15px;border-bottom:3px solid #c4956a;">
             <div style="font-family:'Noto Serif JP',serif;font-size:28px;font-weight:700;letter-spacing:0.05em;"><span style="color:#6b5344;">Michi</span><span style="color:#c4956a;">Spark</span></div>
@@ -1073,7 +1073,7 @@ document.getElementById('exportPdfBtn').addEventListener('click', () => {
 
     // 一時要素を作成してPDF化
     const wrapper = document.createElement('div');
-    wrapper.style.cssText = 'position:absolute;left:0;top:0;width:630px;background:#ffffff;z-index:-1;overflow:hidden;';
+    wrapper.style.cssText = 'position:absolute;left:0;top:0;width:550px;background:#ffffff;z-index:-1;';
     wrapper.innerHTML = pdfContent;
     document.body.appendChild(wrapper);
 
@@ -1085,8 +1085,8 @@ document.getElementById('exportPdfBtn').addEventListener('click', () => {
             scale: 2,
             useCORS: true,
             backgroundColor: '#ffffff',
-            width: 630,
-            windowWidth: 630,
+            width: 550,
+            windowWidth: 550,
             scrollX: 0,
             scrollY: 0,
             onclone: function(clonedDoc) {
