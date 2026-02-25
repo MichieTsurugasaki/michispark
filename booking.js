@@ -2,11 +2,13 @@
 const AVAILABLE_DAYS = [2, 3, 4]; // 火(2), 水(3), 木(4)  ※0=日,1=月,...
 const TIME_SLOTS = ['8:00 - 9:00'];
 const API_ENDPOINT = '/api/booking';
+const CANCEL_ENDPOINT = '/api/cancel';
 
 // ===== State =====
 let currentYear, currentMonth;
 let selectedDate = null;
 let selectedTime = null;
+let rescheduleToken = null; // 日程変更時に旧予約トークンを保持
 
 // ===== DOM =====
 const calendarTitle = document.getElementById('calendarTitle');
@@ -204,6 +206,11 @@ submitBtn.addEventListener('click', async () => {
         message: document.getElementById('userMessage').value
     };
 
+    // 日程変更の場合、旧予約トークンを含める
+    if (rescheduleToken) {
+        payload.rescheduleToken = rescheduleToken;
+    }
+
     try {
         const res = await fetch(API_ENDPOINT, {
             method: 'POST',
@@ -214,6 +221,7 @@ submitBtn.addEventListener('click', async () => {
         if (!res.ok) throw new Error('予約に失敗しました');
 
         document.getElementById('doneDateTime').textContent = formatSelectedDateTime();
+        rescheduleToken = null; // リセット
         goToStep(4);
     } catch (err) {
         alert('予約の送信に失敗しました。しばらくしてからもう一度お試しください。');
@@ -223,5 +231,78 @@ submitBtn.addEventListener('click', async () => {
     }
 });
 
+// ===== キャンセル・日程変更ハンドリング =====
+function handleUrlParams() {
+    const params = new URLSearchParams(window.location.search);
+    const action = params.get('action');
+    const token = params.get('token');
+
+    if (!action || !token) return;
+
+    if (action === 'cancel') {
+        showCancelConfirmation(token);
+    } else if (action === 'reschedule') {
+        startReschedule(token);
+    }
+}
+
+function decodeToken(tokenStr) {
+    try {
+        let base64 = tokenStr.replace(/-/g, '+').replace(/_/g, '/');
+        while (base64.length % 4) base64 += '=';
+        const json = decodeURIComponent(escape(atob(base64)));
+        return JSON.parse(json);
+    } catch {
+        return null;
+    }
+}
+
+function showCancelConfirmation(token) {
+    const booking = decodeToken(token);
+    if (!booking) {
+        alert('無効なリンクです。');
+        return;
+    }
+
+    // ステップを全部非表示
+    [step1, step2, step3, stepDone].forEach(s => s.classList.remove('active'));
+    document.querySelector('.steps').style.display = 'none';
+    document.querySelector('.subtitle').style.display = 'none';
+
+    // キャンセル画面を表示
+    const stepCancel = document.getElementById('stepCancel');
+    const cancelDateTime = document.getElementById('cancelDateTime');
+    cancelDateTime.textContent = `${booking.d} ${booking.t}`;
+    stepCancel.classList.add('active');
+
+    // キャンセル実行ボタン
+    document.getElementById('confirmCancel').addEventListener('click', async () => {
+        loadingOverlay.classList.remove('hidden');
+        try {
+            const res = await fetch(CANCEL_ENDPOINT, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token })
+            });
+            if (!res.ok) throw new Error('キャンセルに失敗');
+
+            stepCancel.classList.remove('active');
+            document.getElementById('stepCancelDone').classList.add('active');
+        } catch (err) {
+            alert('キャンセルに失敗しました。もう一度お試しください。');
+            console.error(err);
+        } finally {
+            loadingOverlay.classList.add('hidden');
+        }
+    });
+}
+
+function startReschedule(token) {
+    rescheduleToken = token;
+    const banner = document.getElementById('rescheduleBanner');
+    if (banner) banner.classList.remove('hidden');
+}
+
 // ===== 初期化 =====
 initCalendar();
+handleUrlParams();

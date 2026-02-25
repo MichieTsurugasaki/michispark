@@ -20,6 +20,11 @@
         <h1>オンライン相談会予約</h1>
         <p class="subtitle">アプリの詳細機能や要件について無料でご相談いただけます</p>
 
+        <!-- 日程変更バナー -->
+        <div id="rescheduleBanner" class="reschedule-banner hidden">
+            以前の予約は、新しい予約の確定時に自動的にキャンセルされます。
+        </div>
+
         <!-- ステップインジケーター -->
         <div class="steps">
             <div class="step active" data-step="1">
@@ -128,6 +133,34 @@
                     <span id="doneDateTime"></span>
                 </div>
                 <a href="index.html" class="back-home">見積もりページに戻る</a>
+            </div>
+        </div>
+
+        <!-- キャンセル確認画面 -->
+        <div id="stepCancel" class="step-content">
+            <div class="cancel-card">
+                <div class="cancel-icon">✕</div>
+                <h2 class="cancel-heading">予約をキャンセルしますか？</h2>
+                <div class="cancel-details">
+                    <span id="cancelDateTime"></span>
+                </div>
+                <p class="cancel-text">キャンセルすると、Zoom会議も削除されます。</p>
+                <div class="form-actions" style="justify-content:center;gap:12px;">
+                    <a href="index.html" class="back-btn" style="text-decoration:none;">戻る</a>
+                    <button id="confirmCancel" class="cancel-submit-btn">キャンセルする</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- キャンセル完了画面 -->
+        <div id="stepCancelDone" class="step-content">
+            <div class="done-card">
+                <div class="done-icon" style="background:#9b3a3a;">✓</div>
+                <h2 class="done-heading">キャンセルが完了しました</h2>
+                <p class="done-text">予約をキャンセルしました。<br>確認メールをお送りしましたのでご確認ください。</p>
+                <div class="form-actions" style="justify-content:center;margin-top:20px;">
+                    <a href="booking" class="next-btn" style="text-decoration:none;">新しい日程で予約する</a>
+                </div>
             </div>
         </div>
     </div>

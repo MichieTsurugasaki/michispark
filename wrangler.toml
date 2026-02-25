@@ -1,0 +1,12 @@
+name = "michispark"
+main = "worker.js"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+[assets]
+directory = "."
+html_handling = "auto-trailing-slash"
+not_found_handling = "none"
+
+[vars]
+ADMIN_EMAIL = "tsurugasaki@conete.net"

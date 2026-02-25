@@ -620,6 +620,84 @@ h1 {
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
+/* ===== Cancel ===== */
+.cancel-card {
+    text-align: center;
+    padding: 2rem 1rem;
+}
+
+.cancel-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--danger);
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.2rem;
+}
+
+.cancel-heading {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--primary-dark);
+    margin-bottom: 0.8rem;
+}
+
+.cancel-details {
+    display: inline-block;
+    padding: 0.6rem 1.2rem;
+    background: #fef2f2;
+    border-radius: 8px;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--primary-dark);
+    margin-bottom: 1rem;
+}
+
+.cancel-text {
+    font-size: 0.88rem;
+    color: var(--secondary);
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+}
+
+.cancel-submit-btn {
+    padding: 0.85rem 2rem;
+    background: #9b3a3a;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.cancel-submit-btn:hover {
+    background: #832e2e;
+}
+
+/* ===== Reschedule Banner ===== */
+.reschedule-banner {
+    background: #fff7ed;
+    border: 1px solid #f5d0a9;
+    border-radius: 8px;
+    padding: 0.8rem 1.2rem;
+    font-size: 0.88rem;
+    color: #92610c;
+    text-align: center;
+    margin-bottom: 1.2rem;
+    font-weight: 500;
+}
+
+.reschedule-banner.hidden { display: none; }
+
 /* ===== Footer ===== */
 .footer {
     width: 100%;
