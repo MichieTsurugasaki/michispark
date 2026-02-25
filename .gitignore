@@ -1,0 +1,4 @@
+.DS_Store
+_write_*.py
+*.pyc
+node_modules/

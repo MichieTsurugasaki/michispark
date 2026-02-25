@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MichiSpark | システム概算見積もり</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header class="brand">
+            <div class="brand-logo">Michi<span class="spark">Spark</span></div>
+            <p class="brand-tagline">System Estimation</p>
+        </header>
+        <h1>システム概算見積もり</h1>
+        <p class="subtitle">ボタンで選択、テキスト・音声で入力、またはPDFをアップロード</p>
+
+        <!-- モデルケース ショートカットボタン -->
+        <div class="model-buttons" id="modelButtons"></div>
+
+        <!-- テキスト入力エリア（上） -->
+        <div class="input-area">
+            <textarea id="userInput" placeholder="例：飲食店の予約アプリを作りたい、社内の勤怠管理を自動化したい...&#10;どんなアプリでもお見積もりします"></textarea>
+            <div class="controls">
+                <button id="voiceBtn">🎤 音声で入力</button>
+                <button id="calcBtn" class="primary">見積もり計算</button>
+                <button id="clearBtn">🗑 クリア</button>
+            </div>
+        </div>
+
+        <div class="divider"><span>または</span></div>
+
+        <!-- PDF アップロードエリア（下） -->
+        <div class="upload-area" id="dropZone">
+            <input type="file" id="pdfFile" accept=".pdf" hidden>
+            <div class="upload-icon">📄</div>
+            <p class="upload-text">PDFをドラッグ＆ドロップ<br>または<span class="upload-link" id="browseLink">ファイルを選択</span></p>
+            <p class="upload-hint">要件定義書・仕様書などのPDFを読み込めます</p>
+        </div>
+
+        <!-- PDF読み込み状態 -->
+        <div id="pdfStatus" class="pdf-status hidden">
+            <div class="pdf-status-inner">
+                <span class="pdf-filename" id="pdfFilename"></span>
+                <button id="pdfClearBtn" class="pdf-clear">✕</button>
+            </div>
+            <div class="pdf-progress hidden" id="pdfProgress">
+                <div class="pdf-progress-bar" id="pdfProgressBar"></div>
+            </div>
+            <p id="pdfCalcHint" class="pdf-calc-hint hidden">👆 「見積もり計算」ボタンを押してください</p>
+        </div>
+
+        <div id="resultCard" class="result-card hidden">
+            <!-- マッチしたモデルケース名 -->
+            <div id="modelCaseBadge" class="model-case-badge hidden"></div>
+            <h2>概算見積もり結果</h2>
+
+            <!-- アプリ詳細説明 -->
+            <div id="appDescription" class="app-description hidden"></div>
+
+            <div class="price-display">
+                <span class="price-label">必須機能 合計</span>
+                <span id="totalPrice">0</span><span class="unit">万円〜</span>
+            </div>
+
+            <!-- 3プラン概要 -->
+            <div id="planSummary" class="plan-summary hidden"></div>
+
+            <!-- 必須機能セクション -->
+            <div id="requiredSection" class="feature-section">
+                <h3 class="section-title required-title">🔒 必須機能</h3>
+                <p class="section-desc">このタイプのアプリに必ず必要な機能です</p>
+                <ul id="requiredList" class="feature-list"></ul>
+                <div class="section-subtotal">
+                    <span>必須機能 小計</span>
+                    <span id="requiredSubtotal" class="subtotal-price"></span>
+                </div>
+            </div>
+
+            <!-- オプション機能セクション（竹・松 2列） -->
+            <div class="option-tiers">
+                <div class="tier-column tier-take">
+                    <div class="tier-header take-header">
+                        <span class="tier-icon">🎋</span>
+                        <span class="tier-name">竹プラン</span>
+                        <span class="tier-label">スタンダード</span>
+                    </div>
+                    <p class="section-desc">基本的なオプション機能</p>
+                    <ul id="takeList" class="feature-list"></ul>
+                    <div class="section-subtotal">
+                        <span>竹プラン 小計</span>
+                        <span id="takeSubtotal" class="subtotal-price"></span>
+                    </div>
+                    <div class="tier-total">
+                        <span>必須 + 竹 合計</span>
+                        <span id="takeTotal" class="tier-total-price"></span>
+                    </div>
+                </div>
+
+                <div class="tier-column tier-matsu">
+                    <div class="tier-header matsu-header">
+                        <span class="tier-icon">🌲</span>
+                        <span class="tier-name">松プラン</span>
+                        <span class="tier-label">プレミアム</span>
+                    </div>
+                    <p class="section-desc">高度・専門的なオプション機能</p>
+                    <ul id="matsuList" class="feature-list"></ul>
+                    <div class="section-subtotal">
+                        <span>松プラン 小計</span>
+                        <span id="matsuSubtotal" class="subtotal-price"></span>
+                    </div>
+                    <div class="tier-total">
+                        <span>必須 + 松 合計</span>
+                        <span id="matsuTotal" class="tier-total-price"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2割引特典 -->
+            <div id="discountSection" class="discount-section">
+                <div class="discount-banner">
+                    <span class="discount-badge">期間限定</span>
+                    <p class="discount-text">本日より<strong>3日以内</strong>にご成約（ご入金）の方に限り</p>
+                    <p class="discount-highlight">全プラン <strong>20%OFF</strong></p>
+                    <p class="discount-deadline" id="discountDeadline"></p>
+                </div>
+                <button id="discountBtn" class="discount-btn">🏷 2割引を適用する</button>
+            </div>
+
+            <div class="result-actions">
+                <button id="speakResult">🔊 読み上げ</button>
+                <button id="exportPdfBtn">📥 PDF見積書をダウンロード</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ローディングオーバーレイ -->
+    <div id="loadingOverlay" class="loading-overlay hidden">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">見積もりを計算中…</p>
+    </div>
+
+    <footer class="footer">
+        <span class="footer-brand">MichiSpark</span>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
