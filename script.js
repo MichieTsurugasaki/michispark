@@ -253,12 +253,7 @@ let extractedPdfText = "";
 let currentResult = null; // 現在の結果（トグル用に保持）
 let isDiscountApplied = false; // 2割引適用状態
 
-// 割引期限日を表示
-function initDiscountDeadline() {
-    const el = document.getElementById('discountDeadline');
-    if (el) el.textContent = '期限：2026年02月28日まで';
-}
-initDiscountDeadline();
+// 紹介者限定割引（期限なし）
 
 // PDFヒントクリックで見積もり計算を実行
 pdfCalcHint.addEventListener('click', () => {
@@ -1014,9 +1009,8 @@ document.getElementById('exportPdfBtn').addEventListener('click', () => {
         ${isDiscountApplied ? `
         <!-- 割引バナー -->
         <div style="margin:25px 0;padding:15px 20px;background:linear-gradient(135deg,#fff5f5,#ffeaea);border:2px solid #e8a0a0;border-radius:12px;text-align:center;">
-            <div style="font-size:11px;font-weight:700;color:#c0392b;letter-spacing:2px;margin-bottom:4px;">🔥 期間限定特典</div>
+            <div style="font-size:11px;font-weight:700;color:#c0392b;letter-spacing:2px;margin-bottom:4px;">🤝 紹介者限定特典</div>
             <div style="font-size:18px;font-weight:900;color:#c0392b;">全プラン 20%OFF 適用中</div>
-            <div style="font-size:12px;color:#c0392b;margin-top:4px;">期限：2026年02月28日まで</div>
         </div>` : ''}
 
         <!-- 注意事項 -->

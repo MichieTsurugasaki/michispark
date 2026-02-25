@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MichiSpark | オンライン相談会予約</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="stylesheet" href="booking.css">
 </head>
 <body>
@@ -87,6 +88,10 @@
                     <input type="text" id="userCompany" placeholder="株式会社〇〇">
                 </div>
                 <div class="form-group">
+                    <label for="userReferrer">紹介者名 <span class="optional">任意</span></label>
+                    <input type="text" id="userReferrer" placeholder="ご紹介者のお名前">
+                </div>
+                <div class="form-group">
                     <label for="userMessage">ご相談内容 <span class="optional">任意</span></label>
                     <textarea id="userMessage" rows="4" placeholder="相談したい内容やアプリのイメージがあればご記入ください"></textarea>
                 </div>
@@ -111,6 +116,8 @@
                     <dd id="confirmEmail"></dd>
                     <dt>会社名</dt>
                     <dd id="confirmCompany"></dd>
+                    <dt>紹介者名</dt>
+                    <dd id="confirmReferrer"></dd>
                     <dt>ご相談内容</dt>
                     <dd id="confirmMessage"></dd>
                 </dl>

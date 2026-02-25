@@ -74,7 +74,7 @@ export default {
 async function handleBooking(request, env) {
     try {
         const body = await request.json();
-        const { date, time, name, email, company, message, rescheduleToken } = body;
+        const { date, time, name, email, company, referrer, message, rescheduleToken } = body;
 
         if (!date || !time || !name || !email) {
             return jsonResponse({ error: '必須項目が入力されていません' }, 400);
@@ -120,14 +120,14 @@ async function handleBooking(request, env) {
         await sendEmail(env, {
             to: email,
             subject: '【MichiSpark】オンライン相談会のご予約確認',
-            html: buildUserEmail({ date, time, name, company, message, zoomLink, cancelUrl, rescheduleUrl })
+            html: buildUserEmail({ date, time, name, company, referrer, message, zoomLink, cancelUrl, rescheduleUrl })
         });
 
         // 通知メール送信（運営宛）
         await sendEmail(env, {
             to: env.ADMIN_EMAIL,
             subject: `【新規予約】${name}様 - ${date} ${time}`,
-            html: buildAdminEmail({ date, time, name, email, company, message, zoomLink })
+            html: buildAdminEmail({ date, time, name, email, company, referrer, message, zoomLink })
         });
 
         // リマインドメール予約（24時間前 + 1時間前）
@@ -136,7 +136,7 @@ async function handleBooking(request, env) {
         // KVに予約を保存
         const bookingId = `booking_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
         await saveBooking(env, {
-            id: bookingId, date, time, name, email, company, message,
+            id: bookingId, date, time, name, email, company, referrer, message,
             zoomLink, meetingId, cancelled: false, createdAt: new Date().toISOString()
         });
 
@@ -546,7 +546,7 @@ function emailFooter() {
 // ========================================
 
 // ユーザー宛 予約確認メール
-function buildUserEmail({ date, time, name, company, message, zoomLink, cancelUrl, rescheduleUrl }) {
+function buildUserEmail({ date, time, name, company, referrer, message, zoomLink, cancelUrl, rescheduleUrl }) {
     return `
     <div style="font-family:'Helvetica Neue',Arial,sans-serif;max-width:560px;margin:0 auto;color:#3d3331;">
         ${emailHeader()}
@@ -560,6 +560,7 @@ function buildUserEmail({ date, time, name, company, message, zoomLink, cancelUr
                     <tr><td style="color:#8c8584;padding:4px 12px 4px 0;vertical-align:top;">日時</td><td style="font-weight:600;padding:4px 0;">${date} ${time}</td></tr>
                     <tr><td style="color:#8c8584;padding:4px 12px 4px 0;vertical-align:top;">形式</td><td style="padding:4px 0;">Zoomオンライン</td></tr>
                     ${company ? `<tr><td style="color:#8c8584;padding:4px 12px 4px 0;vertical-align:top;">会社名</td><td style="padding:4px 0;">${company}</td></tr>` : ''}
+                    ${referrer ? `<tr><td style="color:#8c8584;padding:4px 12px 4px 0;vertical-align:top;">紹介者名</td><td style="padding:4px 0;">${referrer}</td></tr>` : ''}
                     ${message ? `<tr><td style="color:#8c8584;padding:4px 12px 4px 0;vertical-align:top;">ご相談内容</td><td style="padding:4px 0;">${message}</td></tr>` : ''}
                 </table>
             </div>
@@ -581,7 +582,7 @@ function buildUserEmail({ date, time, name, company, message, zoomLink, cancelUr
 }
 
 // 運営宛 新規予約通知
-function buildAdminEmail({ date, time, name, email, company, message, zoomLink }) {
+function buildAdminEmail({ date, time, name, email, company, referrer, message, zoomLink }) {
     return `
     <div style="font-family:'Helvetica Neue',Arial,sans-serif;max-width:560px;margin:0 auto;color:#3d3331;">
         <div style="background:#6b5344;color:white;padding:16px 20px;border-radius:8px 8px 0 0;">
@@ -593,6 +594,7 @@ function buildAdminEmail({ date, time, name, email, company, message, zoomLink }
                 <tr><td style="color:#8c8584;padding:4px 12px 4px 0;">お名前</td><td>${name}</td></tr>
                 <tr><td style="color:#8c8584;padding:4px 12px 4px 0;">メール</td><td><a href="mailto:${email}">${email}</a></td></tr>
                 <tr><td style="color:#8c8584;padding:4px 12px 4px 0;">会社名</td><td>${company || '—'}</td></tr>
+                <tr><td style="color:#8c8584;padding:4px 12px 4px 0;">紹介者名</td><td>${referrer || '—'}</td></tr>
                 <tr><td style="color:#8c8584;padding:4px 12px 4px 0;">相談内容</td><td>${message || '—'}</td></tr>
                 <tr><td style="color:#8c8584;padding:4px 12px 4px 0;">Zoom</td><td><a href="${zoomLink}">${zoomLink}</a></td></tr>
             </table>

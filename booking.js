@@ -221,6 +221,7 @@ bookingForm.addEventListener('submit', (e) => {
     document.getElementById('confirmName').textContent = document.getElementById('userName').value;
     document.getElementById('confirmEmail').textContent = document.getElementById('userEmail').value;
     document.getElementById('confirmCompany').textContent = document.getElementById('userCompany').value || '—';
+    document.getElementById('confirmReferrer').textContent = document.getElementById('userReferrer').value || '—';
     document.getElementById('confirmMessage').textContent = document.getElementById('userMessage').value || '—';
     goToStep(3);
 });
@@ -238,6 +239,7 @@ submitBtn.addEventListener('click', async () => {
         name: document.getElementById('userName').value,
         email: document.getElementById('userEmail').value,
         company: document.getElementById('userCompany').value,
+        referrer: document.getElementById('userReferrer').value,
         message: document.getElementById('userMessage').value
     };
 
