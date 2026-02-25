@@ -903,120 +903,109 @@ button {
 
 /* ===== Discount Section ===== */
 .discount-section {
-    margin-top: 2rem;
+    margin-top: 2.5rem;
     text-align: center;
 }
 
 .discount-banner {
     position: relative;
-    background: linear-gradient(135deg, #fff8f0, #fff3e6, #fff8f0);
-    border: 2px solid #e8c9a0;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 4px 20px rgba(196, 149, 106, 0.15);
+    background: #fffcf8;
+    border-top: 1px solid #d4c4b0;
+    border-bottom: 1px solid #d4c4b0;
+    padding: 2rem 1.5rem;
 }
 
-.discount-ribbon {
-    background: linear-gradient(135deg, #c0392b, #e74c3c);
-    color: white;
-    font-size: 0.85rem;
-    font-weight: 700;
-    padding: 0.5rem 1rem;
-    letter-spacing: 0.1em;
-}
-
-.discount-body {
-    padding: 1.5rem 1.5rem 1.8rem;
+.discount-kigen {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 0.75rem;
+    color: #b08968;
+    letter-spacing: 0.35em;
+    margin-bottom: 0.8rem;
 }
 
 .discount-text {
-    font-size: 0.95rem;
-    color: var(--secondary);
-    margin-bottom: 0.8rem;
-    line-height: 1.6;
-}
-
-.discount-text strong {
-    color: var(--primary-dark);
+    font-size: 0.88rem;
+    color: #8c8584;
+    margin-bottom: 1rem;
+    line-height: 1.7;
+    letter-spacing: 0.03em;
 }
 
 .discount-rate {
-    font-size: 1.1rem;
-    font-weight: 700;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1rem;
+    font-weight: 500;
     color: var(--primary-dark);
-    margin-bottom: 0.8rem;
+    margin-bottom: 1rem;
+    letter-spacing: 0.05em;
 }
 
 .discount-number {
     font-family: 'Noto Serif JP', serif;
-    font-size: 3rem;
-    font-weight: 900;
-    background: linear-gradient(135deg, #c0392b, #e74c3c);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    font-size: 2.6rem;
+    font-weight: 700;
+    color: #9b3a3a;
     line-height: 1;
     vertical-align: baseline;
-    margin: 0 0.1em;
+    margin: 0 0.05em;
 }
 
 .discount-percent {
     font-family: 'Noto Serif JP', serif;
-    font-size: 1.6rem;
-    font-weight: 900;
-    color: #c0392b;
-    margin-left: 0.05em;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #9b3a3a;
+}
+
+.discount-off {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #9b3a3a;
+    margin-left: 0.1em;
+    letter-spacing: 0.1em;
 }
 
 .discount-deadline {
-    font-size: 0.88rem;
-    color: #c0392b;
-    font-weight: 600;
-    padding: 0.4rem 1rem;
-    background: rgba(192, 57, 43, 0.08);
-    border-radius: 20px;
-    display: inline-block;
-}
-
-.discount-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.4rem;
-    margin-top: 1rem;
-    padding: 0.9rem 2.5rem;
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: white;
-    background: linear-gradient(135deg, #c0392b, #e74c3c);
-    border: none;
-    border-radius: 50px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(192, 57, 43, 0.3);
+    font-size: 0.82rem;
+    color: #9b3a3a;
+    font-weight: 500;
     letter-spacing: 0.05em;
 }
 
+.discount-btn {
+    display: inline-block;
+    margin-top: 1.2rem;
+    padding: 0.7rem 2.2rem;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #9b3a3a;
+    background: transparent;
+    border: 1.5px solid #9b3a3a;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    letter-spacing: 0.08em;
+}
+
 .discount-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(192, 57, 43, 0.4);
+    background: #9b3a3a;
+    color: #fff;
 }
 
 .discount-btn:active {
-    transform: translateY(0);
+    opacity: 0.85;
 }
 
 .discount-btn.applied {
-    background: linear-gradient(135deg, #27ae60, #2ecc71);
-    box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+    background: var(--primary-dark);
+    color: #fff;
+    border-color: var(--primary-dark);
 }
 
 .discount-btn.applied:hover {
-    box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
-}
-
-.discount-btn-icon {
-    font-size: 1.2rem;
+    opacity: 0.9;
 }
 
 /* ===== Result Actions ===== */
@@ -1202,9 +1191,9 @@ button {
     .plan-summary { grid-template-columns: 1fr; gap: 0.6rem; }
     .plan-card-price { font-size: 1.1rem; }
     .result-actions { grid-template-columns: 1fr; }
-    .discount-number { font-size: 2.2rem; }
-    .discount-percent { font-size: 1.2rem; }
-    .discount-btn { padding: 0.75rem 1.8rem; font-size: 0.95rem; }
+    .discount-number { font-size: 2rem; }
+    .discount-percent { font-size: 1rem; }
+    .discount-btn { padding: 0.6rem 1.6rem; font-size: 0.85rem; }
     .action-btn { font-size: 0.85rem; padding: 0.75rem 1rem; }
 }
 
