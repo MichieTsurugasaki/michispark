@@ -926,17 +926,17 @@ document.getElementById('exportPdfBtn').addEventListener('click', () => {
     const discountLabel = isDiscountApplied ? ' <span style="color:#c0392b;font-weight:700;">(20%OFF適用)</span>' : '';
 
     const pdfContent = `
-    <div id="pdf-export-content" style="font-family:'Noto Sans JP',sans-serif;color:#3d3331;padding:40px 35px;max-width:700px;margin:0 auto;">
+    <div id="pdf-export-content" style="font-family:'Noto Sans JP',sans-serif;color:#3d3331;padding:40px 35px;max-width:700px;margin:0 auto;background:#ffffff;">
         <!-- ヘッダー -->
         <div style="text-align:center;margin-bottom:30px;padding-bottom:20px;border-bottom:3px solid #c4956a;">
-            <div style="font-family:'Noto Serif JP',serif;font-size:32px;font-weight:700;color:#6b5344;letter-spacing:0.05em;">Michi<span style="background:linear-gradient(135deg,#c4956a,#d4a76a);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Spark</span></div>
+            <div style="font-family:'Noto Serif JP',serif;font-size:32px;font-weight:700;letter-spacing:0.05em;"><span style="color:#6b5344;">Michi</span><span style="color:#c4956a;">Spark</span></div>
             <div style="font-size:10px;color:#b0a8a4;letter-spacing:4px;margin-top:6px;text-transform:uppercase;">System Estimation</div>
         </div>
 
         <!-- タイトル -->
         <div style="text-align:center;margin-bottom:25px;">
             <h1 style="font-size:22px;color:#6b5344;margin:0 0 8px;font-weight:700;">概 算 見 積 書</h1>
-            <div style="width:40px;height:2px;background:linear-gradient(90deg,#c4956a,#d4a76a);margin:0 auto;"></div>
+            <div style="width:40px;height:2px;background:#c4956a;margin:0 auto;"></div>
         </div>
 
         <!-- メタ情報 -->
@@ -948,7 +948,7 @@ document.getElementById('exportPdfBtn').addEventListener('click', () => {
         </table>
 
         <!-- モデルケース名 -->
-        <div style="background:linear-gradient(135deg,#f7f4f2,#f0ebe6);padding:12px 18px;border-radius:10px;margin-bottom:25px;border-left:4px solid #c4956a;">
+        <div style="background:#f7f4f2;padding:12px 18px;border-radius:10px;margin-bottom:25px;border-left:4px solid #c4956a;">
             <span style="font-size:13px;color:#8c8584;">モデルケース</span>
             <div style="font-size:16px;font-weight:700;color:#6b5344;margin-top:4px;">${mc.name}</div>
         </div>
@@ -1008,51 +1008,55 @@ document.getElementById('exportPdfBtn').addEventListener('click', () => {
 
         ${isDiscountApplied ? `
         <!-- 割引バナー -->
-        <div style="margin:25px 0;padding:15px 20px;background:linear-gradient(135deg,#fff5f5,#ffeaea);border:2px solid #e8a0a0;border-radius:12px;text-align:center;">
+        <div style="margin:25px 0;padding:15px 20px;background:#fff5f5;border:2px solid #e8a0a0;border-radius:12px;text-align:center;">
             <div style="font-size:11px;font-weight:700;color:#c0392b;letter-spacing:2px;margin-bottom:4px;">🤝 紹介者限定特典</div>
             <div style="font-size:18px;font-weight:900;color:#c0392b;">全プラン 20%OFF 適用中</div>
         </div>` : ''}
 
         <!-- 注意事項 -->
-        <div style="margin-top:30px;padding:18px 20px;background:linear-gradient(135deg,#f7f4f2,#f0ebe6);border-radius:10px;font-size:11.5px;color:#8c8584;line-height:1.8;">
+        <div style="margin-top:30px;padding:18px 20px;background:#f7f4f2;border-radius:10px;font-size:11.5px;color:#8c8584;line-height:1.8;">
             <p style="margin:0 0 4px;">※ 上記は概算見積もりです。正確な金額はヒアリング後にご提示いたします。</p>
             <p style="margin:0;">※ 表示価格は税抜です。別途消費税がかかります。</p>
         </div>
 
         <!-- フッター -->
         <div style="text-align:center;margin-top:30px;padding-top:20px;border-top:1px solid #e0d6ce;">
-            <div style="font-family:'Noto Serif JP',serif;font-size:15px;font-weight:700;color:#6b5344;letter-spacing:0.1em;">Michi<span style="color:#c4956a;">Spark</span></div>
+            <div style="font-size:15px;font-weight:700;letter-spacing:0.1em;"><span style="color:#6b5344;">Michi</span><span style="color:#c4956a;">Spark</span></div>
             <div style="font-size:10px;color:#b0a8a4;margin-top:4px;letter-spacing:2px;">michispark.app</div>
         </div>
     </div>`;
 
     // 一時要素を作成してPDF化
     const wrapper = document.createElement('div');
+    wrapper.style.cssText = 'position:fixed;left:0;top:0;width:700px;z-index:-9999;opacity:0;pointer-events:none;background:#ffffff;';
     wrapper.innerHTML = pdfContent;
     document.body.appendChild(wrapper);
 
     const opt = {
         margin: [10, 10, 10, 10],
         filename: `MichiSpark_見積書_${mc.name.replace(/[\s/]/g, '_')}_${dateStr.replace(/\//g, '')}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true },
+        image: { type: 'png', quality: 1 },
+        html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff', width: 700, windowWidth: 700 },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
-    html2pdf().set(opt).from(wrapper.firstElementChild).toPdf().get('pdf').then((pdf) => {
-        const blob = pdf.output('blob');
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = opt.filename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        document.body.removeChild(wrapper);
-    }).catch((err) => {
-        console.error('PDF export error:', err);
-        alert('PDFの生成に失敗しました。再度お試しください。');
-        document.body.removeChild(wrapper);
-    });
+    // フォント・レンダリング待機後にキャプチャ
+    setTimeout(() => {
+        html2pdf().set(opt).from(wrapper.firstElementChild).toPdf().get('pdf').then((pdf) => {
+            const blob = pdf.output('blob');
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = opt.filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            document.body.removeChild(wrapper);
+        }).catch((err) => {
+            console.error('PDF export error:', err);
+            alert('PDFの生成に失敗しました。再度お試しください。');
+            document.body.removeChild(wrapper);
+        });
+    }, 500);
 });
