@@ -2,6 +2,12 @@
 const API_BASE = '';
 let adminToken = '';
 
+// HTMLエスケープ（XSS防止）
+function escHtml(str) {
+    if (!str) return '';
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
 // ===== DOM =====
 const loginScreen = document.getElementById('loginScreen');
 const dashboard = document.getElementById('dashboard');
@@ -177,9 +183,9 @@ function renderBookings() {
 
         return `<div class="booking-item ${itemClass}" data-idx="${i}" onclick="showBookingDetail(${bookings.indexOf(b)})">
             <div class="booking-info">
-                <div class="booking-date">${b.date} ${b.time}</div>
-                <div class="booking-name">${b.name}${b.company ? ' / ' + b.company : ''}</div>
-                <div class="booking-email">${b.email}</div>
+                <div class="booking-date">${escHtml(b.date)} ${escHtml(b.time)}</div>
+                <div class="booking-name">${escHtml(b.name)}${b.company ? ' / ' + escHtml(b.company) : ''}</div>
+                <div class="booking-email">${escHtml(b.email)}</div>
             </div>
             <span class="booking-status ${statusClass}">${statusText}</span>
         </div>`;
@@ -206,12 +212,12 @@ window.showBookingDetail = function(idx) {
     const isPast = bDate < now;
 
     modalBody.innerHTML = `<table>
-        <tr><td>日時</td><td>${b.date} ${b.time}</td></tr>
-        <tr><td>お名前</td><td>${b.name}</td></tr>
-        <tr><td>メール</td><td><a href="mailto:${b.email}">${b.email}</a></td></tr>
-        <tr><td>会社名</td><td>${b.company || '—'}</td></tr>
-        <tr><td>相談内容</td><td>${b.message || '—'}</td></tr>
-        <tr><td>Zoom</td><td>${b.zoomLink ? `<a href="${b.zoomLink}" target="_blank" style="word-break:break-all;">${b.zoomLink}</a>` : '—'}</td></tr>
+        <tr><td>日時</td><td>${escHtml(b.date)} ${escHtml(b.time)}</td></tr>
+        <tr><td>お名前</td><td>${escHtml(b.name)}</td></tr>
+        <tr><td>メール</td><td><a href="mailto:${escHtml(b.email)}">${escHtml(b.email)}</a></td></tr>
+        <tr><td>会社名</td><td>${escHtml(b.company) || '—'}</td></tr>
+        <tr><td>相談内容</td><td>${escHtml(b.message) || '—'}</td></tr>
+        <tr><td>Zoom</td><td>${b.zoomLink ? `<a href="${escHtml(b.zoomLink)}" target="_blank" style="word-break:break-all;">${escHtml(b.zoomLink)}</a>` : '—'}</td></tr>
         <tr><td>状態</td><td>${b.cancelled ? '<span style="color:#9b3a3a;font-weight:600;">キャンセル済み</span>' : isPast ? '完了' : '<span style="color:#2e7d32;font-weight:600;">予約中</span>'}</td></tr>
     </table>`;
 
@@ -345,7 +351,7 @@ const DAY_NAMES = ['日曜日', '月曜日', '火曜日', '水曜日', '木曜�
 
 function renderRecurringSlots() {
     if (recurringSlots.length === 0) {
-        recurringSlotsList.innerHTML = '<p class="empty-msg">繰り返し枚はありません</p>';
+        recurringSlotsList.innerHTML = '<p class="empty-msg">繰り返し枠はありません</p>';
         return;
     }
     recurringSlots.sort((a, b) => a.day - b.day);
@@ -373,7 +379,7 @@ addRecurringBtn.addEventListener('click', async () => {
 });
 
 window.removeRecurring = async function(day, time) {
-    if (!confirm(`毎週${DAY_NAMES[day]} ${time} の繰り返し枚を削除しますか？`)) return;
+    if (!confirm(`毎週${DAY_NAMES[day]} ${time} の繰り返し枠を削除しますか？`)) return;
     try {
         await apiDelete(`/api/admin/schedule/recurring?day=${day}&time=${encodeURIComponent(time)}`);
         await loadSchedule();

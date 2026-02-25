@@ -478,7 +478,7 @@ async function handleAdminAddExtra(request, env) {
     const { date, time } = await request.json();
     if (!date || !time) return jsonResponse({ error: '日付と時間が必要です' }, 400);
     const extra = await getExtraDates(env);
-    if (!extra.find(d => d.date === date)) {
+    if (!extra.find(d => d.date === date && d.time === time)) {
         extra.push({ date, time });
         await env.BOOKING_KV.put('extra_dates', JSON.stringify(extra));
     }

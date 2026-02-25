@@ -402,6 +402,7 @@ document.getElementById('clearBtn').addEventListener('click', () => {
     userInput.value = "";
     extractedPdfText = "";
     currentResult = null;
+    isDiscountApplied = false;
     resultCard.classList.add('hidden');
     pdfStatus.classList.add('hidden');
     pdfCalcHint.classList.add('hidden');

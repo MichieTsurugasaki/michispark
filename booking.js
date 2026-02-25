@@ -10,7 +10,16 @@ let selectedDate = null;
 let selectedTime = null;
 let rescheduleToken = null; // 日程変更時に旧予約トークンを保持
 let blockedDates = []; // 管理者がブロックした日
-let extraDates = [];   // 管理者が追加した臨時枠let recurringSlots = []; // 繰り返し予約枚
+let extraDates = [];   // 管理者が追加した臨時枠
+let recurringSlots = []; // 繰り返し予約枠
+
+// ローカル日付フォーマット（toISOStringのUTC変換を避ける）
+function formatDateLocal(date) {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+}
 // ===== DOM =====
 const calendarTitle = document.getElementById('calendarTitle');
 const calendarGrid = document.getElementById('calendarGrid');
@@ -56,7 +65,7 @@ async function initCalendar() {
 }
 
 function isDateAvailable(date) {
-    const dateStr = date.toISOString().split('T')[0];
+    const dateStr = formatDateLocal(date);
     const dow = date.getDay();
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -64,16 +73,16 @@ function isDateAvailable(date) {
     if (date < today) return false;
     if (blockedDates.includes(dateStr)) return false;
     if (extraDates.find(e => e.date === dateStr)) return true;
-    // 繰り返し枚に該当曜日があれば予約可能
+    // 繰り返し枠に該当曜日があれば予約可能
     if (recurringSlots.find(r => r.day === dow)) return true;
     return AVAILABLE_DAYS.includes(dow);
 }
 
 function getTimeSlotsForDate(date) {
-    const dateStr = date.toISOString().split('T')[0];
+    const dateStr = formatDateLocal(date);
     const dow = date.getDay();
     const extra = extraDates.find(e => e.date === dateStr);
-    // 臨時枚があればそれを使う
+    // 臨時枠があればそれを使う
     const slots = extra ? [extra.time] : [];
     // 通常の曜日（火水木）ならデフォルト時間を追加
     if (AVAILABLE_DAYS.includes(dow)) {
@@ -249,7 +258,7 @@ submitBtn.addEventListener('click', async () => {
     loadingOverlay.classList.remove('hidden');
 
     const payload = {
-        date: selectedDate.toISOString().split('T')[0],
+        date: formatDateLocal(selectedDate),
         time: selectedTime,
         name: document.getElementById('userName').value,
         email: document.getElementById('userEmail').value,
@@ -319,7 +328,8 @@ function showCancelConfirmation(token) {
     // ステップを全部非表示
     [step1, step2, step3, stepDone].forEach(s => s.classList.remove('active'));
     document.querySelector('.steps').style.display = 'none';
-    document.querySelector('.subtitle').style.display = 'none';
+    const subtitleEl = document.querySelector('.subtitle');
+    if (subtitleEl) subtitleEl.style.display = 'none';
 
     // キャンセル画面を表示
     const stepCancel = document.getElementById('stepCancel');
@@ -327,7 +337,7 @@ function showCancelConfirmation(token) {
     cancelDateTime.textContent = `${booking.d} ${booking.t}`;
     stepCancel.classList.add('active');
 
-    // キャンセル実行ボタン
+    // キャンセル実行ボタン（once: trueで重複防止）
     document.getElementById('confirmCancel').addEventListener('click', async () => {
         loadingOverlay.classList.remove('hidden');
         try {
@@ -346,7 +356,7 @@ function showCancelConfirmation(token) {
         } finally {
             loadingOverlay.classList.add('hidden');
         }
-    });
+    }, { once: true });
 }
 
 function startReschedule(token) {

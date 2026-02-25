@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;600;700&display=swap');
+
 :root {
     --primary: #8b6f5c;
     --primary-light: #a4897a;
@@ -14,8 +16,6 @@
     --danger: #b5666a;
     --gold: #b8963e;
 }
-
-@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;600;700&display=swap');
 
 body {
     font-family: 'Noto Sans JP', 'Helvetica Neue', Arial, sans-serif;
@@ -494,6 +494,37 @@ button {
     color: var(--secondary);
     font-weight: 400;
     margin-left: 2px;
+}
+
+.discounted-original {
+    font-size: 1rem;
+    color: var(--secondary);
+    text-decoration: line-through;
+    margin-right: 0.5rem;
+}
+
+.discount-rate-badge {
+    display: inline-block;
+    background: #c0392b;
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    margin-left: 0.5rem;
+    vertical-align: middle;
+}
+
+.plan-original {
+    font-size: 0.8rem;
+    color: var(--secondary);
+    text-decoration: line-through;
+    font-weight: 400;
+    margin-right: 0.3rem;
+}
+
+.plan-card-price.has-discount {
+    color: #c0392b;
 }
 
 /* ===== Model Case Badge ===== */
