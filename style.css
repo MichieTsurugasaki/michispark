@@ -1103,6 +1103,18 @@ button {
     transform: translateY(-1px);
 }
 
+.action-speak.speaking {
+    color: white;
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    border-color: #c0392b;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+.action-speak.speaking:hover {
+    background: linear-gradient(135deg, #c0392b, #a93226);
+    color: white;
+}
+
 /* ===== Loading Overlay ===== */
 .loading-overlay {
     position: fixed;

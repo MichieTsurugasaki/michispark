@@ -826,8 +826,18 @@ function renderTierColumn(listId, tierIds, subtotalId, totalId, requiredTotal) {
 }
 
 // ===== 読み上げ =====
-document.getElementById('speakResult').addEventListener('click', () => {
+const speakBtn = document.getElementById('speakResult');
+speakBtn.addEventListener('click', () => {
     if (!('speechSynthesis' in window) || !currentResult) return;
+
+    // 再生中なら停止
+    if (speechSynthesis.speaking) {
+        speechSynthesis.cancel();
+        speakBtn.querySelector('.action-icon').textContent = '🔊';
+        speakBtn.querySelector('.action-label').textContent = '読み上げ';
+        speakBtn.classList.remove('speaking');
+        return;
+    }
 
     const mc = currentResult.modelCase;
     const total = calcTotal();
@@ -853,6 +863,18 @@ document.getElementById('speakResult').addEventListener('click', () => {
     const utter = new SpeechSynthesisUtterance(speech);
     utter.lang = 'ja-JP';
     utter.rate = 1.1;
+
+    // ボタンを停止状態に切り替え
+    speakBtn.querySelector('.action-icon').textContent = '⏹';
+    speakBtn.querySelector('.action-label').textContent = '停止';
+    speakBtn.classList.add('speaking');
+
+    utter.onend = () => {
+        speakBtn.querySelector('.action-icon').textContent = '🔊';
+        speakBtn.querySelector('.action-label').textContent = '読み上げ';
+        speakBtn.classList.remove('speaking');
+    };
+
     speechSynthesis.cancel();
     speechSynthesis.speak(utter);
 });
