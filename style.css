@@ -45,6 +45,79 @@ body {
     border: 1px solid var(--border);
 }
 
+/* ===== Brand Logo ===== */
+.brand {
+    text-align: center;
+    margin-bottom: 2.2rem;
+    padding-bottom: 1.5rem;
+    position: relative;
+}
+
+.brand-mark {
+    margin-bottom: 0.6rem;
+}
+
+.brand-icon {
+    display: inline-block;
+    font-size: 1.1rem;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: sparkRotate 6s ease-in-out infinite;
+}
+
+@keyframes sparkRotate {
+    0%, 100% { transform: rotate(0deg) scale(1); opacity: 0.8; }
+    50% { transform: rotate(180deg) scale(1.15); opacity: 1; }
+}
+
+.brand-logo {
+    font-size: 2.8rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    line-height: 1;
+    color: var(--primary-dark);
+    font-family: 'Noto Serif JP', serif;
+    position: relative;
+    display: inline-block;
+}
+
+.brand-logo .spark {
+    background: linear-gradient(135deg, var(--accent), #d4a574, var(--gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    position: relative;
+}
+
+.brand-logo .spark::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--gold));
+    border-radius: 1px;
+}
+
+.brand-line {
+    width: 40px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    margin: 0.7rem auto 0.5rem;
+}
+
+.brand-tagline {
+    font-size: 0.78rem;
+    color: var(--secondary);
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    font-weight: 300;
+    margin: 0;
+}
+
 h1 {
     font-family: 'Noto Serif JP', serif;
     font-size: 1.85rem;
@@ -895,6 +968,16 @@ button {
     font-family: 'Noto Serif JP', serif;
     letter-spacing: 0.15em;
     font-weight: 500;
+}
+.footer-brand {
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 700;
+}
+.footer-spark {
+    background: linear-gradient(135deg, var(--accent), #d4a76a);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 /* ===== Responsive ===== */
