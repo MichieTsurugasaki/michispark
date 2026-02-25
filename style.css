@@ -37,7 +37,7 @@ body {
 .container {
     background: var(--card);
     width: 94%;
-    max-width: 1060px;
+    max-width: 900px;
     padding: 2.5rem 3rem;
     border-radius: 16px;
     box-shadow:
@@ -60,7 +60,7 @@ body {
 
 .brand-icon {
     display: inline-block;
-    font-size: 1.4rem;
+    font-size: 1.1rem;
     background: linear-gradient(135deg, var(--primary), var(--accent));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -70,7 +70,7 @@ body {
 
 @keyframes sparkRotate {
     0%, 100% { transform: rotate(0deg) scale(1); opacity: 0.8; }
-    50% { transform: rotate(90deg) scale(1.1); opacity: 1; }
+    50% { transform: rotate(180deg) scale(1.15); opacity: 1; }
 }
 
 .brand-logo {
@@ -1043,8 +1043,8 @@ button {
     flex-direction: column;
     color: white;
     background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    font-size: 1.05rem;
-    padding: 1.1rem 1.5rem;
+    font-size: 1.2rem;
+    padding: 1.2rem 1.5rem;
     box-shadow: 0 4px 15px rgba(107, 83, 68, 0.25);
     position: relative;
     overflow: hidden;
