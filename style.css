@@ -901,19 +901,206 @@ button {
     letter-spacing: -0.01em;
 }
 
-/* ===== Speak Button ===== */
-#speakResult {
-    width: 100%;
-    margin-top: 0.8rem;
-    background: #f5f0ec;
-    color: var(--secondary);
-    border: 1px solid var(--border);
-    font-size: 0.85rem;
+/* ===== Discount Section ===== */
+.discount-section {
+    margin-top: 2rem;
+    text-align: center;
 }
 
-#speakResult:hover {
-    background: #ede5df;
+.discount-banner {
+    position: relative;
+    background: linear-gradient(135deg, #fff8f0, #fff3e6, #fff8f0);
+    border: 2px solid #e8c9a0;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(196, 149, 106, 0.15);
+}
+
+.discount-ribbon {
+    background: linear-gradient(135deg, #c0392b, #e74c3c);
+    color: white;
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 0.5rem 1rem;
+    letter-spacing: 0.1em;
+}
+
+.discount-body {
+    padding: 1.5rem 1.5rem 1.8rem;
+}
+
+.discount-text {
+    font-size: 0.95rem;
+    color: var(--secondary);
+    margin-bottom: 0.8rem;
+    line-height: 1.6;
+}
+
+.discount-text strong {
+    color: var(--primary-dark);
+}
+
+.discount-rate {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+    margin-bottom: 0.8rem;
+}
+
+.discount-number {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 3rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, #c0392b, #e74c3c);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    vertical-align: baseline;
+    margin: 0 0.1em;
+}
+
+.discount-percent {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: #c0392b;
+    margin-left: 0.05em;
+}
+
+.discount-deadline {
+    font-size: 0.88rem;
+    color: #c0392b;
+    font-weight: 600;
+    padding: 0.4rem 1rem;
+    background: rgba(192, 57, 43, 0.08);
+    border-radius: 20px;
+    display: inline-block;
+}
+
+.discount-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    margin-top: 1rem;
+    padding: 0.9rem 2.5rem;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: white;
+    background: linear-gradient(135deg, #c0392b, #e74c3c);
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(192, 57, 43, 0.3);
+    letter-spacing: 0.05em;
+}
+
+.discount-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(192, 57, 43, 0.4);
+}
+
+.discount-btn:active {
+    transform: translateY(0);
+}
+
+.discount-btn.applied {
+    background: linear-gradient(135deg, #27ae60, #2ecc71);
+    box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+}
+
+.discount-btn.applied:hover {
+    box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
+}
+
+.discount-btn-icon {
+    font-size: 1.2rem;
+}
+
+/* ===== Result Actions ===== */
+.result-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+    margin-top: 1.5rem;
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.9rem 1.2rem;
+    font-size: 0.92rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    line-height: 1.3;
+}
+
+.action-btn .action-icon {
+    font-size: 1.15rem;
+    flex-shrink: 0;
+}
+
+.action-consult {
+    grid-column: 1 / -1;
+    color: white;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    font-size: 1.05rem;
+    padding: 1rem 1.5rem;
+    box-shadow: 0 4px 15px rgba(107, 83, 68, 0.25);
+    position: relative;
+    overflow: hidden;
+}
+
+.action-consult::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+    transition: left 0.5s ease;
+}
+
+.action-consult:hover::before {
+    left: 100%;
+}
+
+.action-consult:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(107, 83, 68, 0.35);
+}
+
+.action-pdf {
+    color: var(--primary-dark);
+    background: linear-gradient(135deg, #f5efe9, #ede5dd);
+    border: 1.5px solid var(--border);
+}
+
+.action-pdf:hover {
+    background: linear-gradient(135deg, #ede5dd, #e5dbd3);
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(107, 83, 68, 0.12);
+}
+
+.action-speak {
+    color: var(--secondary);
+    background: #f8f5f2;
+    border: 1.5px solid var(--border);
+}
+
+.action-speak:hover {
+    background: #f0ebe6;
     color: var(--text);
+    transform: translateY(-1px);
 }
 
 /* ===== Loading Overlay ===== */
@@ -1002,6 +1189,11 @@ button {
     .tier-column .feature-list li { font-size: 0.82rem; }
     .plan-summary { grid-template-columns: 1fr; gap: 0.6rem; }
     .plan-card-price { font-size: 1.1rem; }
+    .result-actions { grid-template-columns: 1fr; }
+    .discount-number { font-size: 2.2rem; }
+    .discount-percent { font-size: 1.2rem; }
+    .discount-btn { padding: 0.75rem 1.8rem; font-size: 0.95rem; }
+    .action-btn { font-size: 0.85rem; padding: 0.75rem 1rem; }
 }
 
 @media (min-width: 481px) and (max-width: 600px) {
@@ -1014,6 +1206,7 @@ button {
     .model-btn { padding: 0.4rem 0.7rem; font-size: 0.72rem; }
     .option-tiers { grid-template-columns: 1fr; }
     .plan-summary { grid-template-columns: 1fr; gap: 0.6rem; }
+    .result-actions { grid-template-columns: 1fr; }
 }
 
 @media (min-width: 780px) {

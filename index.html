@@ -125,17 +125,29 @@
             <!-- 2割引特典 -->
             <div id="discountSection" class="discount-section">
                 <div class="discount-banner">
-                    <span class="discount-badge">期間限定</span>
-                    <p class="discount-text">本日より<strong>3日以内</strong>にご成約（ご入金）の方に限り</p>
-                    <p class="discount-highlight">全プラン <strong>20%OFF</strong></p>
-                    <p class="discount-deadline" id="discountDeadline"></p>
+                    <div class="discount-ribbon">🔥 期間限定</div>
+                    <div class="discount-body">
+                        <p class="discount-text">本日より<strong>3日以内</strong>にご成約（ご入金）の方に限り</p>
+                        <div class="discount-rate">全プラン <span class="discount-number">20</span><span class="discount-percent">%OFF</span></div>
+                        <p class="discount-deadline" id="discountDeadline"></p>
+                    </div>
                 </div>
-                <button id="discountBtn" class="discount-btn">🏷 2割引を適用する</button>
+                <button id="discountBtn" class="discount-btn"><span class="discount-btn-icon">🏷</span> 2割引を適用する</button>
             </div>
 
             <div class="result-actions">
-                <button id="speakResult">🔊 読み上げ</button>
-                <button id="exportPdfBtn">📥 PDF見積書をダウンロード</button>
+                <a href="https://cal.com/michispark" target="_blank" rel="noopener noreferrer" class="action-btn action-consult">
+                    <span class="action-icon">💬</span>
+                    <span class="action-label">オンライン相談（無料）</span>
+                </a>
+                <button id="exportPdfBtn" class="action-btn action-pdf">
+                    <span class="action-icon">📥</span>
+                    <span class="action-label">PDF見積書をダウンロード</span>
+                </button>
+                <button id="speakResult" class="action-btn action-speak">
+                    <span class="action-icon">🔊</span>
+                    <span class="action-label">読み上げ</span>
+                </button>
             </div>
         </div>
     </div>
