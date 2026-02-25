@@ -253,15 +253,10 @@ let extractedPdfText = "";
 let currentResult = null; // 現在の結果（トグル用に保持）
 let isDiscountApplied = false; // 2割引適用状態
 
-// 割引期限日を計算・表示
+// 割引期限日を表示
 function initDiscountDeadline() {
-    const deadline = new Date();
-    deadline.setDate(deadline.getDate() + 3);
-    const y = deadline.getFullYear();
-    const m = String(deadline.getMonth() + 1).padStart(2, '0');
-    const d = String(deadline.getDate()).padStart(2, '0');
     const el = document.getElementById('discountDeadline');
-    if (el) el.textContent = `期限：${y}年${m}月${d}日まで`;
+    if (el) el.textContent = '期限：2026年02月28日まで';
 }
 initDiscountDeadline();
 
@@ -891,72 +886,127 @@ document.getElementById('exportPdfBtn').addEventListener('click', () => {
     const dateStr = `${today.getFullYear()}/${String(today.getMonth()+1).padStart(2,'0')}/${String(today.getDate()).padStart(2,'0')}`;
 
     // 必須機能一覧
-    let reqRows = `<tr><td style="padding:6px 10px;border-bottom:1px solid #ddd;">🏗️ ${mc.baseName}</td><td style="padding:6px 10px;border-bottom:1px solid #ddd;text-align:right;">${currentResult.basePrice}万円</td></tr>`;
+    let reqRows = `<tr><td style="padding:8px 12px;border-bottom:1px solid #e8e0d8;color:#3d3331;">🏗️ ${mc.baseName}</td><td style="padding:8px 12px;border-bottom:1px solid #e8e0d8;text-align:right;color:#6b5344;font-weight:600;">${currentResult.basePrice}万円</td></tr>`;
     for (const id of currentResult.requiredIds) {
         const f = featureMaster[id];
-        if (f) reqRows += `<tr><td style="padding:6px 10px;border-bottom:1px solid #ddd;">${f.icon} ${f.name}</td><td style="padding:6px 10px;border-bottom:1px solid #ddd;text-align:right;">${f.price}万円</td></tr>`;
+        if (f) reqRows += `<tr><td style="padding:8px 12px;border-bottom:1px solid #e8e0d8;color:#3d3331;">${f.icon} ${f.name}</td><td style="padding:8px 12px;border-bottom:1px solid #e8e0d8;text-align:right;color:#6b5344;font-weight:600;">${f.price}万円</td></tr>`;
     }
 
     // 竹オプション一覧
     let takeRows = '';
     for (const id of take) {
         const f = featureMaster[id];
-        if (f && currentResult.optionalEnabled[id]) takeRows += `<tr><td style="padding:5px 10px;border-bottom:1px solid #eee;">${f.icon} ${f.name}</td><td style="padding:5px 10px;border-bottom:1px solid #eee;text-align:right;">${f.price}万円</td></tr>`;
+        if (f && currentResult.optionalEnabled[id]) takeRows += `<tr><td style="padding:7px 12px;border-bottom:1px solid #dde8dd;color:#3d3331;">${f.icon} ${f.name}</td><td style="padding:7px 12px;border-bottom:1px solid #dde8dd;text-align:right;color:#4a6b4a;font-weight:600;">${f.price}万円</td></tr>`;
     }
 
     // 松オプション一覧
     let matsuRows = '';
     for (const id of matsu) {
         const f = featureMaster[id];
-        if (f && currentResult.optionalEnabled[id]) matsuRows += `<tr><td style="padding:5px 10px;border-bottom:1px solid #eee;">${f.icon} ${f.name}</td><td style="padding:5px 10px;border-bottom:1px solid #eee;text-align:right;">${f.price}万円</td></tr>`;
+        if (f && currentResult.optionalEnabled[id]) matsuRows += `<tr><td style="padding:7px 12px;border-bottom:1px solid #e0dace;color:#3d3331;">${f.icon} ${f.name}</td><td style="padding:7px 12px;border-bottom:1px solid #e0dace;text-align:right;color:#6b5a3a;font-weight:600;">${f.price}万円</td></tr>`;
     }
 
     const discountLabel = isDiscountApplied ? ' <span style="color:#c0392b;font-weight:700;">(20%OFF適用)</span>' : '';
 
     const pdfContent = `
-    <div id="pdf-export-content" style="font-family:'Noto Sans JP',sans-serif;color:#3d3331;padding:30px;max-width:700px;margin:0 auto;">
-        <div style="text-align:center;margin-bottom:25px;">
-            <div style="font-family:serif;font-size:28px;font-weight:700;color:#6b5344;">Michi<span style="color:#c4956a;">Spark</span></div>
-            <div style="font-size:11px;color:#8c8584;letter-spacing:3px;margin-top:4px;">SYSTEM ESTIMATION</div>
+    <div id="pdf-export-content" style="font-family:'Noto Sans JP',sans-serif;color:#3d3331;padding:40px 35px;max-width:700px;margin:0 auto;">
+        <!-- ヘッダー -->
+        <div style="text-align:center;margin-bottom:30px;padding-bottom:20px;border-bottom:3px solid #c4956a;">
+            <div style="font-family:'Noto Serif JP',serif;font-size:32px;font-weight:700;color:#6b5344;letter-spacing:0.05em;">Michi<span style="background:linear-gradient(135deg,#c4956a,#d4a76a);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Spark</span></div>
+            <div style="font-size:10px;color:#b0a8a4;letter-spacing:4px;margin-top:6px;text-transform:uppercase;">System Estimation</div>
         </div>
-        <h1 style="text-align:center;font-size:20px;color:#6b5344;border-bottom:2px solid #c4956a;padding-bottom:10px;margin-bottom:5px;">概算見積書</h1>
-        <p style="text-align:right;font-size:13px;color:#8c8584;margin-bottom:20px;">作成日：${dateStr}</p>
-        <p style="font-size:14px;margin-bottom:5px;"><strong>モデルケース：</strong>${mc.name}</p>
-        <p style="font-size:13px;color:#6b5f5d;margin-bottom:20px;">制作期間の目安：${estimatePeriod(requiredTotal)}</p>
 
-        <h2 style="font-size:16px;color:#b5666a;margin-bottom:8px;">🔒 必須機能（基本プラン）</h2>
-        <table style="width:100%;border-collapse:collapse;font-size:14px;margin-bottom:5px;">
-            ${reqRows}
+        <!-- タイトル -->
+        <div style="text-align:center;margin-bottom:25px;">
+            <h1 style="font-size:22px;color:#6b5344;margin:0 0 8px;font-weight:700;">概 算 見 積 書</h1>
+            <div style="width:40px;height:2px;background:linear-gradient(90deg,#c4956a,#d4a76a);margin:0 auto;"></div>
+        </div>
+
+        <!-- メタ情報 -->
+        <table style="width:100%;margin-bottom:25px;font-size:13px;">
+            <tr>
+                <td style="color:#8c8584;">作成日：${dateStr}</td>
+                <td style="text-align:right;color:#8c8584;">制作期間の目安：${estimatePeriod(requiredTotal)}</td>
+            </tr>
         </table>
-        <div style="text-align:right;font-size:15px;font-weight:700;color:#6b5344;padding:8px 10px;border-top:2px solid #6b5344;">
-            基本プラン合計：${isDiscountApplied ? `<span style="text-decoration:line-through;color:#8c8584;font-weight:400;">${requiredTotal.toLocaleString()}万円</span> → <span style="color:#c0392b;">${Math.round(requiredTotal * rate).toLocaleString()}万円</span>` : `${requiredTotal.toLocaleString()}万円〜`}${discountLabel}
+
+        <!-- モデルケース名 -->
+        <div style="background:linear-gradient(135deg,#f7f4f2,#f0ebe6);padding:12px 18px;border-radius:10px;margin-bottom:25px;border-left:4px solid #c4956a;">
+            <span style="font-size:13px;color:#8c8584;">モデルケース</span>
+            <div style="font-size:16px;font-weight:700;color:#6b5344;margin-top:4px;">${mc.name}</div>
+        </div>
+
+        <!-- 必須機能 -->
+        <div style="margin-bottom:25px;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+                <div style="width:4px;height:20px;background:#b5666a;border-radius:2px;"></div>
+                <h2 style="font-size:15px;color:#b5666a;margin:0;font-weight:700;">🔒 必須機能（基本プラン）</h2>
+            </div>
+            <table style="width:100%;border-collapse:collapse;font-size:13px;">
+                <thead><tr style="background:#f7f4f2;"><th style="padding:8px 12px;text-align:left;font-weight:600;color:#6b5344;border-bottom:2px solid #e0d6ce;">機能名</th><th style="padding:8px 12px;text-align:right;font-weight:600;color:#6b5344;border-bottom:2px solid #e0d6ce;width:100px;">金額</th></tr></thead>
+                <tbody>
+                    ${reqRows}
+                </tbody>
+            </table>
+            <div style="text-align:right;font-size:15px;font-weight:700;color:#6b5344;padding:10px 12px;background:#f7f4f2;border-radius:0 0 8px 8px;margin-top:2px;">
+                基本プラン合計：${isDiscountApplied ? `<span style="text-decoration:line-through;color:#8c8584;font-weight:400;font-size:13px;">${requiredTotal.toLocaleString()}万円</span> <span style="color:#c0392b;">${Math.round(requiredTotal * rate).toLocaleString()}万円</span>` : `${requiredTotal.toLocaleString()}万円〜`}${discountLabel}
+            </div>
         </div>
 
         ${takeRows ? `
-        <h2 style="font-size:16px;color:#4a6b4a;margin:20px 0 8px;">🎋 竹プラン オプション</h2>
-        <table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:5px;">
-            ${takeRows}
-        </table>
-        <div style="text-align:right;font-size:14px;font-weight:700;color:#4a6b4a;padding:6px 10px;border-top:2px solid #4a6b4a;">
-            竹プラン合計（必須+竹）：${isDiscountApplied ? `<span style="text-decoration:line-through;color:#8c8584;font-weight:400;">${takeTotal.toLocaleString()}万円</span> → <span style="color:#c0392b;">${Math.round(takeTotal * rate).toLocaleString()}万円</span>` : `${takeTotal.toLocaleString()}万円〜`}
+        <!-- 竹プラン -->
+        <div style="margin-bottom:25px;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+                <div style="width:4px;height:20px;background:#5a8a5a;border-radius:2px;"></div>
+                <h2 style="font-size:15px;color:#4a6b4a;margin:0;font-weight:700;">🎋 竹プラン オプション</h2>
+            </div>
+            <table style="width:100%;border-collapse:collapse;font-size:13px;">
+                <thead><tr style="background:#f2f7f2;"><th style="padding:8px 12px;text-align:left;font-weight:600;color:#4a6b4a;border-bottom:2px solid #c5dcc5;">機能名</th><th style="padding:8px 12px;text-align:right;font-weight:600;color:#4a6b4a;border-bottom:2px solid #c5dcc5;width:100px;">金額</th></tr></thead>
+                <tbody>
+                    ${takeRows}
+                </tbody>
+            </table>
+            <div style="text-align:right;font-size:14px;font-weight:700;color:#4a6b4a;padding:10px 12px;background:#f2f7f2;border-radius:0 0 8px 8px;margin-top:2px;">
+                竹プラン合計（必須+竹）：${isDiscountApplied ? `<span style="text-decoration:line-through;color:#8c8584;font-weight:400;font-size:13px;">${takeTotal.toLocaleString()}万円</span> <span style="color:#c0392b;">${Math.round(takeTotal * rate).toLocaleString()}万円</span>` : `${takeTotal.toLocaleString()}万円〜`}
+            </div>
         </div>` : ''}
 
         ${matsuRows ? `
-        <h2 style="font-size:16px;color:#6b5a3a;margin:20px 0 8px;">🌲 松プラン オプション</h2>
-        <table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:5px;">
-            ${matsuRows}
-        </table>
-        <div style="text-align:right;font-size:14px;font-weight:700;color:#6b5a3a;padding:6px 10px;border-top:2px solid #6b5a3a;">
-            松プラン合計（必須+竹+松）：${isDiscountApplied ? `<span style="text-decoration:line-through;color:#8c8584;font-weight:400;">${matsuTotal.toLocaleString()}万円</span> → <span style="color:#c0392b;">${Math.round(matsuTotal * rate).toLocaleString()}万円</span>` : `${matsuTotal.toLocaleString()}万円〜`}
+        <!-- 松プラン -->
+        <div style="margin-bottom:25px;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+                <div style="width:4px;height:20px;background:#8a7040;border-radius:2px;"></div>
+                <h2 style="font-size:15px;color:#6b5a3a;margin:0;font-weight:700;">🌲 松プラン オプション</h2>
+            </div>
+            <table style="width:100%;border-collapse:collapse;font-size:13px;">
+                <thead><tr style="background:#f7f4ee;"><th style="padding:8px 12px;text-align:left;font-weight:600;color:#6b5a3a;border-bottom:2px solid #d4c9b0;">機能名</th><th style="padding:8px 12px;text-align:right;font-weight:600;color:#6b5a3a;border-bottom:2px solid #d4c9b0;width:100px;">金額</th></tr></thead>
+                <tbody>
+                    ${matsuRows}
+                </tbody>
+            </table>
+            <div style="text-align:right;font-size:14px;font-weight:700;color:#6b5a3a;padding:10px 12px;background:#f7f4ee;border-radius:0 0 8px 8px;margin-top:2px;">
+                松プラン合計（必須+竹+松）：${isDiscountApplied ? `<span style="text-decoration:line-through;color:#8c8584;font-weight:400;font-size:13px;">${matsuTotal.toLocaleString()}万円</span> <span style="color:#c0392b;">${Math.round(matsuTotal * rate).toLocaleString()}万円</span>` : `${matsuTotal.toLocaleString()}万円〜`}
+            </div>
         </div>` : ''}
 
-        <div style="margin-top:30px;padding:15px;background:#f7f4f2;border-radius:8px;font-size:12px;color:#8c8584;line-height:1.7;">
-            <p>※ 上記は概算見積もりです。正確な金額はヒアリング後にご提示いたします。</p>
-            <p>※ 表示価格は税抜です。別途消費税がかかります。</p>
-            ${isDiscountApplied ? '<p style="color:#c0392b;font-weight:600;">※ 3日以内ご成約特典：20%OFF適用中</p>' : ''}
+        ${isDiscountApplied ? `
+        <!-- 割引バナー -->
+        <div style="margin:25px 0;padding:15px 20px;background:linear-gradient(135deg,#fff5f5,#ffeaea);border:2px solid #e8a0a0;border-radius:12px;text-align:center;">
+            <div style="font-size:11px;font-weight:700;color:#c0392b;letter-spacing:2px;margin-bottom:4px;">🔥 期間限定特典</div>
+            <div style="font-size:18px;font-weight:900;color:#c0392b;">全プラン 20%OFF 適用中</div>
+            <div style="font-size:12px;color:#c0392b;margin-top:4px;">期限：2026年02月28日まで</div>
+        </div>` : ''}
+
+        <!-- 注意事項 -->
+        <div style="margin-top:30px;padding:18px 20px;background:linear-gradient(135deg,#f7f4f2,#f0ebe6);border-radius:10px;font-size:11.5px;color:#8c8584;line-height:1.8;">
+            <p style="margin:0 0 4px;">※ 上記は概算見積もりです。正確な金額はヒアリング後にご提示いたします。</p>
+            <p style="margin:0;">※ 表示価格は税抜です。別途消費税がかかります。</p>
         </div>
-        <div style="text-align:center;margin-top:25px;font-size:13px;color:#6b5344;font-family:serif;letter-spacing:2px;">
-            MichiSpark
+
+        <!-- フッター -->
+        <div style="text-align:center;margin-top:30px;padding-top:20px;border-top:1px solid #e0d6ce;">
+            <div style="font-family:'Noto Serif JP',serif;font-size:15px;font-weight:700;color:#6b5344;letter-spacing:0.1em;">Michi<span style="color:#c4956a;">Spark</span></div>
+            <div style="font-size:10px;color:#b0a8a4;margin-top:4px;letter-spacing:2px;">michispark.app</div>
         </div>
     </div>`;
 
