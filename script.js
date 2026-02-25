@@ -1033,15 +1033,26 @@ document.getElementById('exportPdfBtn').addEventListener('click', () => {
 
     const opt = {
         margin: [10, 10, 10, 10],
-        filename: `MichiSpark_見積書_${mc.name.replace(/[\\s\\/]/g, '_')}_${dateStr.replace(/\\//g, '')}.pdf`,
+        filename: `MichiSpark_見積書_${mc.name.replace(/[\s/]/g, '_')}_${dateStr.replace(/\//g, '')}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2, useCORS: true },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
-    html2pdf().set(opt).from(wrapper.firstElementChild).save().then(() => {
+    html2pdf().set(opt).from(wrapper.firstElementChild).toPdf().get('pdf').then((pdf) => {
+        const blob = pdf.output('blob');
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = opt.filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
         document.body.removeChild(wrapper);
-    }).catch(() => {
+    }).catch((err) => {
+        console.error('PDF export error:', err);
+        alert('PDFの生成に失敗しました。再度お試しください。');
         document.body.removeChild(wrapper);
     });
 });

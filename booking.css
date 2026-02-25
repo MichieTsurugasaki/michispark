@@ -31,7 +31,7 @@ body {
     align-items: center;
     min-height: 100vh;
     margin: 0;
-    padding: 2.5rem 1rem 0;
+    padding: 1.5rem 1rem 0;
     font-size: 16.5px;
 }
 
@@ -39,74 +39,68 @@ body {
     background: var(--card);
     width: 94%;
     max-width: 680px;
-    padding: 2.5rem 3rem;
+    padding: 1.5rem 2.5rem;
     border-radius: 16px;
     box-shadow: 0 4px 24px rgba(61, 51, 49, 0.06), 0 1px 4px rgba(61, 51, 49, 0.04);
     border: 1px solid var(--border);
 }
 
-/* ===== Brand ===== */
-.brand { text-align: center; padding-bottom: 0.8rem; }
-.brand-mark { margin-bottom: 0.6rem; }
-.brand-icon {
-    display: inline-block;
-    font-size: 1.1rem;
+/* ===== Brand Compact ===== */
+.brand-compact {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 0.6rem;
+    margin-bottom: 0.6rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.brand-compact-left {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.brand-icon-sm {
+    font-size: 0.9rem;
     background: linear-gradient(135deg, var(--primary), var(--accent));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
 }
 
-.brand-logo {
-    font-size: 2.4rem;
+.brand-link-sm {
+    font-size: 1.3rem;
     font-weight: 700;
     line-height: 1;
     color: var(--primary-dark);
     font-family: 'Noto Serif JP', serif;
-}
-
-.brand-link {
     text-decoration: none;
-    color: inherit;
 }
 
-.brand-link .spark {
+.brand-link-sm .spark {
     background: linear-gradient(135deg, var(--accent), #d4a574, var(--gold));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
 }
 
-.brand-line {
-    width: 40px;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--accent), transparent);
-    margin: 0.7rem auto 0.5rem;
+.brand-compact-right {
+    text-align: right;
 }
 
-.brand-tagline {
-    font-size: 0.75rem;
-    color: var(--secondary);
-    letter-spacing: 0.35em;
-    text-transform: uppercase;
-    font-weight: 300;
-}
-
-h1 {
+.brand-compact-title {
+    display: block;
     font-family: 'Noto Serif JP', serif;
-    font-size: 1.7rem;
+    font-size: 0.95rem;
     font-weight: 600;
-    text-align: center;
-    margin-bottom: 0.4rem;
     color: var(--primary-dark);
-    letter-spacing: 0.06em;
+    letter-spacing: 0.04em;
 }
 
-.subtitle {
-    text-align: center;
+.brand-compact-sub {
+    font-size: 0.7rem;
     color: var(--secondary);
-    font-size: 0.9rem;
-    margin-bottom: 2rem;
     letter-spacing: 0.02em;
 }
 
@@ -116,7 +110,7 @@ h1 {
     align-items: center;
     justify-content: center;
     gap: 0;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
 }
 
 .step {
@@ -722,52 +716,58 @@ h1 {
 
 /* ===== Responsive ===== */
 @media (max-width: 640px) {
-    body { padding: 0.8rem 0.4rem 0; }
-    .container { padding: 1.5rem 1.2rem; max-width: 100%; border-radius: 10px; }
-    h1 { font-size: 1.25rem; }
-    .subtitle { font-size: 0.82rem; margin-bottom: 1.2rem; }
-    .brand-logo { font-size: 1.8rem; }
-    .brand-tagline { font-size: 0.68rem; letter-spacing: 0.25em; }
-    .steps { gap: 0; }
-    .step-num { width: 28px; height: 28px; font-size: 0.78rem; }
-    .step-label { font-size: 0.7rem; }
-    .step-line { width: 16px; margin: 0 0.3rem; }
-    .calendar-weekdays span { font-size: 0.72rem; }
-    .cal-day { font-size: 0.82rem; width: 36px; height: 36px; }
-    .cal-nav { font-size: 1.3rem; width: 32px; height: 32px; }
-    .cal-title { font-size: 1rem; }
-    .calendar-note { font-size: 0.75rem; }
-    .time-slot { padding: 0.6rem 1.2rem; font-size: 0.88rem; }
-    .time-heading { font-size: 0.92rem; }
-    .next-btn { font-size: 0.9rem; padding: 0.75rem 1.5rem; }
-    .selected-summary { padding: 0.6rem 0.8rem; flex-direction: column; gap: 0.2rem; }
-    .summary-label { font-size: 0.78rem; }
-    .summary-value { font-size: 0.9rem; }
-    .booking-form label { font-size: 0.85rem; }
+    body { padding: 0.5rem 0.3rem 0; }
+    .container { padding: 1rem 0.8rem; max-width: 100%; border-radius: 10px; }
+    .brand-compact { margin-bottom: 0.4rem; padding-bottom: 0.4rem; }
+    .brand-link-sm { font-size: 1.1rem; }
+    .brand-compact-title { font-size: 0.82rem; }
+    .brand-compact-sub { font-size: 0.62rem; }
+    .steps { gap: 0; margin-bottom: 0.8rem; }
+    .step-num { width: 24px; height: 24px; font-size: 0.72rem; }
+    .step-label { font-size: 0.65rem; }
+    .step-line { width: 12px; margin: 0 0.2rem; }
+    .calendar-section { margin-bottom: 0.8rem; }
+    .calendar-header { margin-bottom: 0.5rem; }
+    .calendar-weekdays span { font-size: 0.7rem; }
+    .cal-day { font-size: 0.78rem; width: 34px; height: 34px; }
+    .cal-nav { font-size: 1.2rem; width: 30px; height: 30px; }
+    .cal-title { font-size: 0.95rem; }
+    .calendar-note { font-size: 0.72rem; margin-top: 0.3rem; }
+    .time-slot { padding: 0.5rem 1rem; font-size: 0.85rem; }
+    .time-heading { font-size: 0.88rem; }
+    .next-btn { font-size: 0.88rem; padding: 0.7rem 1.2rem; }
+    .selected-summary { padding: 0.5rem 0.7rem; flex-direction: column; gap: 0.15rem; }
+    .summary-label { font-size: 0.75rem; }
+    .summary-value { font-size: 0.88rem; }
+    .booking-form label { font-size: 0.82rem; }
     .booking-form input,
-    .booking-form textarea { font-size: 0.9rem; padding: 0.65rem 0.8rem; }
-    .confirm-card { padding: 1rem; }
-    .confirm-heading { font-size: 1rem; }
-    .confirm-list { grid-template-columns: 1fr; gap: 0.3rem; }
-    .confirm-list dt { min-width: auto; font-size: 0.78rem; margin-top: 0.3rem; }
-    .confirm-list dd { font-size: 0.88rem; }
-    .confirm-note { font-size: 0.78rem; }
+    .booking-form textarea { font-size: 0.88rem; padding: 0.6rem 0.7rem; }
+    .form-group { margin-bottom: 0.8rem; }
+    .confirm-card { padding: 0.8rem; }
+    .confirm-heading { font-size: 0.95rem; }
+    .confirm-list { grid-template-columns: 1fr; gap: 0.25rem; }
+    .confirm-list dt { min-width: auto; font-size: 0.75rem; margin-top: 0.25rem; }
+    .confirm-list dd { font-size: 0.85rem; }
+    .confirm-note { font-size: 0.75rem; }
     .form-actions { flex-direction: column-reverse; gap: 0.5rem; }
     .back-btn, .submit-btn, .next-btn { width: 100%; text-align: center; }
-    .done-heading { font-size: 1.1rem; }
-    .done-text { font-size: 0.82rem; }
-    .done-summary { font-size: 0.88rem; padding: 0.5rem 1rem; }
-    .cancel-heading { font-size: 1.1rem; }
+    .done-heading { font-size: 1.05rem; }
+    .done-text { font-size: 0.8rem; }
+    .done-summary { font-size: 0.85rem; padding: 0.4rem 0.8rem; }
+    .cancel-heading { font-size: 1.05rem; }
     .cancel-card .form-actions { flex-direction: row; }
-    .reschedule-banner { font-size: 0.8rem; padding: 0.6rem 0.8rem; }
-    .loading-text { font-size: 0.8rem; }
+    .reschedule-banner { font-size: 0.78rem; padding: 0.5rem 0.7rem; }
+    .loading-text { font-size: 0.78rem; }
+    .footer { padding: 1rem 0.5rem; font-size: 0.78rem; }
 }
 
 @media (max-width: 380px) {
-    .container { padding: 1.2rem 0.8rem; }
-    h1 { font-size: 1.1rem; }
-    .brand-logo { font-size: 1.5rem; }
-    .cal-day { width: 32px; height: 32px; font-size: 0.75rem; }
-    .step-num { width: 24px; height: 24px; font-size: 0.7rem; }
-    .step-label { font-size: 0.62rem; }
+    .container { padding: 0.8rem 0.6rem; }
+    .brand-link-sm { font-size: 1rem; }
+    .brand-compact-title { font-size: 0.75rem; }
+    .brand-compact-sub { font-size: 0.58rem; }
+    .cal-day { width: 30px; height: 30px; font-size: 0.72rem; }
+    .step-num { width: 22px; height: 22px; font-size: 0.65rem; }
+    .step-label { font-size: 0.58rem; }
+    .step-line { width: 8px; }
 }
