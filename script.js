@@ -407,6 +407,8 @@ document.getElementById('clearBtn').addEventListener('click', () => {
     pdfCalcHint.classList.add('hidden');
     pdfFile.value = "";
     dropZone.style.display = "";
+    // スマホ用: クリアボタンを非表示に戻す
+    document.getElementById('clearBtn').classList.remove('show');
     window.scrollTo({ top: 0, behavior: 'smooth' });
 });
 
@@ -698,6 +700,8 @@ function renderResult() {
 
     // 表示
     resultCard.classList.remove('hidden');
+    // スマホ用: クリアボタンを表示
+    document.getElementById('clearBtn').classList.add('show');
 }
 
 // ===== 制作期間の目安を計算 =====

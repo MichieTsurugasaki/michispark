@@ -812,6 +812,8 @@ button {
     border: 1px solid var(--border);
     padding: 0;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 .tier-header {
@@ -856,6 +858,7 @@ button {
 
 .tier-column .feature-list {
     padding: 0 0.6rem;
+    flex-grow: 1;
 }
 
 .tier-column .feature-list li {
@@ -882,7 +885,7 @@ button {
     justify-content: space-between;
     align-items: center;
     padding: 0.8rem 1rem;
-    margin-top: 0.6rem;
+    margin-top: auto;
     font-size: 0.95rem;
     font-weight: 700;
     color: white;
@@ -1200,7 +1203,8 @@ button {
     /* ボタン - 大きくタップしやすく */
     .controls { grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 0.7rem; }
     .controls button { padding: 0.9rem 0.5rem; font-size: 0.95rem; min-height: 48px; border-radius: 10px; }
-    .controls #clearBtn { grid-column: span 2; min-height: 44px; font-size: 0.9rem; }
+    .controls #clearBtn { grid-column: span 2; min-height: 44px; font-size: 0.9rem; display: none; }
+    .controls #clearBtn.show { display: block; }
 
     /* 区切り */
     .divider { margin: 0.7rem 0; font-size: 0.82rem; }
