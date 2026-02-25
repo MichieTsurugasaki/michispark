@@ -1032,7 +1032,7 @@ document.getElementById('exportPdfBtn').addEventListener('click', () => {
 
     // 一時要素を作成してPDF化
     const wrapper = document.createElement('div');
-    wrapper.style.cssText = 'position:fixed;left:0;top:0;width:700px;z-index:-9999;opacity:0;pointer-events:none;background:#ffffff;';
+    wrapper.style.cssText = 'position:fixed;left:-9999px;top:0;width:700px;pointer-events:none;background:#ffffff;';
     wrapper.innerHTML = pdfContent;
     document.body.appendChild(wrapper);
 
